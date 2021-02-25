@@ -3,6 +3,7 @@ package it.unimore.iot.smart.home.project.server.resource.raw;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Random;
 import java.util.UUID;
 
 /**
@@ -16,15 +17,28 @@ public class PresenceRawSensor extends SmartObjectResource<Boolean> {
 
     private static final String LOG_DISPLAY_NAME = "PresenceSensor";
 
-    private static final String RESOURCE_TYPE = "iot.sensor.presence";
+    private static final String RESOURCE_TYPE = "iot:sensor:presence";
 
     private Boolean isPresence;
 
+    // Properties for simulation
+    // milliseconds
+    private static final long PRESENCE_DURATION_TIME_MIN = 2000;
+
+    private static final long PRESENCE_DURATION_TIME_MAX = 10000;
+
+    private static final long PRESENCE_DETECTION_TIME_MIN = 2000;
+
+    private static final long PRESENCE_DETECTION_TIME_MAX = 5000;
+
+    // Constructor
     public PresenceRawSensor() {
         super(UUID.randomUUID().toString(), RESOURCE_TYPE);
         this.isPresence = false;
+        behaviorSimulation();
     }
 
+    // Getters and Setters
     public Boolean getPresence() {
         return isPresence;
     }
@@ -34,9 +48,49 @@ public class PresenceRawSensor extends SmartObjectResource<Boolean> {
         notifyUpdate(this.isPresence);
     }
 
+    // Override Method SmartObjectResource
     @Override
     public Boolean loadUpdatedValue() {
         return this.isPresence;
+    }
+
+    /**
+     * Method containing the code used to simulate the behavior of the presence sensor
+     */
+    private void behaviorSimulation() {
+
+        Thread thread = new Thread() {
+            public void run(){
+                try {
+                    while(true) {
+
+                        Random random = new Random(System.currentTimeMillis());
+                        long presenceDetectionEventTime = (long) (PRESENCE_DETECTION_TIME_MIN + ((PRESENCE_DETECTION_TIME_MAX - PRESENCE_DETECTION_TIME_MIN) * random.nextDouble()));
+                        long presenceDuration = (long) (PRESENCE_DURATION_TIME_MIN + ((PRESENCE_DURATION_TIME_MAX - PRESENCE_DURATION_TIME_MIN) * random.nextDouble()));
+
+                        // Presence detection true
+                        logger.info("Presence Detection Event Time {}", presenceDetectionEventTime);
+                        this.sleep(presenceDetectionEventTime);
+                        logger.info("Presence Detection");
+                        setPresence(true);
+
+
+                        logger.info("Presence Duration {}", presenceDuration);
+                        this.sleep(presenceDuration);
+                        logger.info("No presence");
+                        // Presence detection false
+                        setPresence(false);
+
+                    }
+
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        thread.start();
+
     }
 
     public static void main(String[] args) {
@@ -46,20 +100,6 @@ public class PresenceRawSensor extends SmartObjectResource<Boolean> {
                 rawResource.getId(),
                 LOG_DISPLAY_NAME,
                 rawResource.loadUpdatedValue());
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try{
-                    for(int i=0; i<100; i++){
-                        rawResource.setPresence(!rawResource.loadUpdatedValue());
-                        Thread.sleep(1000);
-                    }
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-            }
-        }).start();
 
         rawResource.addDataListener(new ResourceDataListener<Boolean>() {
             @Override

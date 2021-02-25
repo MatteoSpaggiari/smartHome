@@ -17,8 +17,6 @@ public class LightControllerModel {
     // RGB - each color channel from 0 to 255
     private HashMap<String, Integer> color;
 
-    private String locationResourceUri;
-
     // Set default values
     {
         this.isActive = false;
@@ -35,7 +33,6 @@ public class LightControllerModel {
         this.isActive = isActive;
         this.intensity = intensity;
         this.color = color;
-        this.locationResourceUri = locationResourceUri;
     }
 
     public boolean isActive() {
@@ -62,21 +59,12 @@ public class LightControllerModel {
         this.color = color;
     }
 
-    public String getLocationResourceUri() {
-        return locationResourceUri;
-    }
-
-    public void setLocationResourceUri(String locationResourceUri) {
-        this.locationResourceUri = locationResourceUri;
-    }
-
     @Override
     public String toString() {
         final StringBuffer sb = new StringBuffer("LightControllerModel{");
         sb.append("isActive=").append(isActive);
         sb.append(", intensity=").append(intensity);
         sb.append(", color=").append(color);
-        sb.append(", locationResourceUri='").append(locationResourceUri).append('\'');
         sb.append('}');
         return sb.toString();
     }

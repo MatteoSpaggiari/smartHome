@@ -15,9 +15,9 @@ public class LightControllerRawSmartObject extends SmartObjectResource<LightCont
 
     private static Logger logger = LoggerFactory.getLogger(LightControllerRawSmartObject.class);
 
-    private  LightControllerModel lightControllerModel;
+    private LightControllerModel lightControllerModel;
 
-    private static final String RESOURCE_TYPE = "iot.light.controller";
+    private static final String RESOURCE_TYPE = "iot:light:controller";
 
     public LightControllerRawSmartObject(LightControllerModel lightControllerModel) {
         super(UUID.randomUUID().toString(), RESOURCE_TYPE);
