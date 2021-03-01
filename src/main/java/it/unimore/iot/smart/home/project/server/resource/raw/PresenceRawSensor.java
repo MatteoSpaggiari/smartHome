@@ -62,6 +62,7 @@ public class PresenceRawSensor extends SmartObjectResource<Boolean> {
         Thread thread = new Thread() {
             public void run(){
                 try {
+
                     while(true) {
 
                         Random random = new Random(System.currentTimeMillis());

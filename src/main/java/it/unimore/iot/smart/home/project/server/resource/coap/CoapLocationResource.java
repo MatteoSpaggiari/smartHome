@@ -8,8 +8,11 @@ import org.eclipse.californium.core.CoapResource;
 import org.eclipse.californium.core.coap.CoAP;
 import org.eclipse.californium.core.coap.MediaTypeRegistry;
 import it.unimore.iot.smart.home.project.utils.CoreInterfaces;
+import org.eclipse.californium.core.server.resources.CoapExchange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Optional;
 
 public class CoapLocationResource extends CoapResource {
 
@@ -47,22 +50,44 @@ public class CoapLocationResource extends CoapResource {
 
             getAttributes().setTitle(OBJECT_TITLE);
             getAttributes().setObservable();
-            getAttributes().addAttribute("rt", locationRawDescriptor.getType());
             getAttributes().addAttribute("ct", Integer.toString(MediaTypeRegistry.APPLICATION_LINK_FORMAT));
         }
         else
             logger.error("Error -> NULL Raw Reference !");
 
-        /*
-        this.locationRawDescriptor.addDataListener(new ResourceDataListener<ThermostatConfigurationModel>() {
-            @Override
-            public void onDataChanged(SmartObjectResource<ThermostatConfigurationModel> resource, ThermostatConfigurationModel updatedValue) {
-                configurationModelValue = updatedValue;
-                changed();
-            }
-        });
+    }
 
-         */
+    private Optional<String> getDataLinkFormatResponse() {
+
+        try {
+
+            String path = this.getURI();
+            return Optional.of(String.format("<%s>;ct=\"%s\"",path,Integer.toString(MediaTypeRegistry.APPLICATION_LINK_FORMAT)));
+
+        } catch (Exception e){
+            return Optional.empty();
+        }
+
+    }
+
+    @Override
+    public void handleGET(CoapExchange exchange) {
+
+        //If the request specify the MediaType as JSON or JSON+SenML
+        if(exchange.getRequestOptions().getAccept() == MediaTypeRegistry.APPLICATION_LINK_FORMAT){
+
+            Optional<String> payload = getDataLinkFormatResponse();
+
+            if(payload.isPresent())
+                exchange.respond(CoAP.ResponseCode.CONTENT, payload.get(), exchange.getRequestOptions().getAccept());
+            else
+                exchange.respond(CoAP.ResponseCode.INTERNAL_SERVER_ERROR);
+        }
+        //Otherwise respond with the default text/plain payload
+        else {
+            Optional<String> payload = getDataLinkFormatResponse();
+            exchange.respond(CoAP.ResponseCode.CONTENT, payload.get(), MediaTypeRegistry.TEXT_PLAIN);
+        }
 
     }
 

@@ -20,7 +20,6 @@ public class CoapLightControllerResource extends CoapResource {
 
     private static final Number VERSION = 0.1;
 
-
     private LightControllerRawSmartObject lightControllerRawSmartObject;
 
     private LightControllerModel lightControllerModel;
@@ -49,7 +48,6 @@ public class CoapLightControllerResource extends CoapResource {
 
             getAttributes().setTitle(OBJECT_TITLE);
             getAttributes().setObservable();
-            getAttributes().addAttribute("rt", lightControllerRawSmartObject.getType());
             getAttributes().addAttribute("ct", Integer.toString(MediaTypeRegistry.APPLICATION_LINK_FORMAT));
         }
         else

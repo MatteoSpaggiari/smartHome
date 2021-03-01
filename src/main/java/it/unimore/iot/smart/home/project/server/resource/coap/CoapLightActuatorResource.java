@@ -165,7 +165,7 @@ public class CoapLightActuatorResource extends CoapResource {
                 exchange.respond(CoAP.ResponseCode.BAD_REQUEST);
 
         }catch (Exception e){
-            logger.error("Error Handling POST -> {}", e.getLocalizedMessage());
+            logger.error("Error Handling PUT -> {}", e.getLocalizedMessage());
             exchange.respond(CoAP.ResponseCode.INTERNAL_SERVER_ERROR);
         }
 
