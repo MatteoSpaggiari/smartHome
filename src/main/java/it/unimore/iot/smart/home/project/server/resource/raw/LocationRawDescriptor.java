@@ -4,8 +4,6 @@ import it.unimore.iot.smart.home.project.server.resource.model.LocationDescripto
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-
 public class LocationRawDescriptor {
 
     private static Logger logger = LoggerFactory.getLogger(LocationRawDescriptor.class);

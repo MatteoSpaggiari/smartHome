@@ -2,6 +2,7 @@ package it.unimore.iot.smart.home.project.server.resource.model;
 
 import it.unimore.iot.smart.home.project.server.resource.raw.SmartObjectResource;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,6 +19,13 @@ public class LocationDescriptor {
     private String floor;
 
     private List<SmartObjectResource> smartObjectResourceList;
+
+    {
+        smartObjectResourceList = new ArrayList<>();
+    }
+
+    public LocationDescriptor() {
+    }
 
     public LocationDescriptor(String id, String room, String floor, List<SmartObjectResource> smartObjectResourceList) {
         this.id = id;

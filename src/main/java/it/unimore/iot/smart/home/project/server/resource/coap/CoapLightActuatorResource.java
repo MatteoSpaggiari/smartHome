@@ -2,7 +2,7 @@ package it.unimore.iot.smart.home.project.server.resource.coap;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.unimore.iot.smart.home.project.server.resource.raw.PresenceRawSensor;
+import it.unimore.iot.smart.home.project.server.resource.raw.LightRawActuator;
 import it.unimore.iot.smart.home.project.server.resource.raw.ResourceDataListener;
 import it.unimore.iot.smart.home.project.server.resource.raw.SmartObjectResource;
 import it.unimore.iot.smart.home.project.utils.CoreInterfaces;
@@ -17,35 +17,30 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
-public class CoapPresenceSensorResource extends CoapResource {
+public class CoapLightActuatorResource extends CoapResource {
 
-    private final static Logger logger = LoggerFactory.getLogger(CoapPresenceSensorResource.class);
+    private final static Logger logger = LoggerFactory.getLogger(CoapLightActuatorResource.class);
 
-    private static final String OBJECT_TITLE = "PresenceSensor";
+    private static final String OBJECT_TITLE = "LightSwitchActuator";
 
-    private static final Number VERSION = 0.1;
+    private static final Number SENSOR_VERSION = 0.1;
 
     private ObjectMapper objectMapper;
 
-    private PresenceRawSensor presenceRawSensor;
+    private LightRawActuator lightRawActuator;
 
-    private Boolean isPresence;
+    private Boolean isOn = true;
 
     private String deviceId;
 
-    {
-        this.isPresence = false;
-    }
-
-
-    public CoapPresenceSensorResource(String deviceId, String name, PresenceRawSensor presenceRawSensor) {
+    public CoapLightActuatorResource(String deviceId, String name, LightRawActuator lightRawActuator) {
         super(name);
 
-        if(presenceRawSensor != null && deviceId != null){
+        if(lightRawActuator != null && deviceId != null){
 
             this.deviceId = deviceId;
 
-            this.presenceRawSensor = presenceRawSensor;
+            this.lightRawActuator = lightRawActuator;
 
             //Jackson Object Mapper + Ignore Null Fields in order to properly generate the SenML Payload
             this.objectMapper = new ObjectMapper();
@@ -56,16 +51,16 @@ public class CoapPresenceSensorResource extends CoapResource {
 
             getAttributes().setTitle(OBJECT_TITLE);
             getAttributes().setObservable();
-            getAttributes().addAttribute("rt", presenceRawSensor.getType());
-            getAttributes().addAttribute("if", CoreInterfaces.CORE_S.getValue());
+            getAttributes().addAttribute("rt", lightRawActuator.getType());
+            getAttributes().addAttribute("if", CoreInterfaces.CORE_A.getValue());
             getAttributes().addAttribute("ct", Integer.toString(MediaTypeRegistry.APPLICATION_SENML_JSON));
             getAttributes().addAttribute("ct", Integer.toString(MediaTypeRegistry.TEXT_PLAIN));
 
-            presenceRawSensor.addDataListener(new ResourceDataListener<Boolean>() {
+            lightRawActuator.addDataListener(new ResourceDataListener<Boolean>() {
                 @Override
                 public void onDataChanged(SmartObjectResource<Boolean> resource, Boolean updatedValue) {
                     logger.info("Raw Resource Notification Callback ! New Value: {}", updatedValue);
-                    isPresence = updatedValue;
+                    isOn = updatedValue;
                     changed();
                 }
             });
@@ -87,8 +82,8 @@ public class CoapPresenceSensorResource extends CoapResource {
 
             SenMLRecord senMLRecord = new SenMLRecord();
             senMLRecord.setBn(String.format("%s:%s", this.deviceId, this.getName()));
-            senMLRecord.setBver(VERSION);
-            senMLRecord.setVb(isPresence);
+            senMLRecord.setBver(SENSOR_VERSION);
+            senMLRecord.setVb(isOn);
             senMLRecord.setT(System.currentTimeMillis());
 
             senMLPack.add(senMLRecord);
@@ -116,7 +111,64 @@ public class CoapPresenceSensorResource extends CoapResource {
         }
         //Otherwise respond with the default textplain payload
         else
-            exchange.respond(CoAP.ResponseCode.CONTENT, String.valueOf(isPresence), MediaTypeRegistry.TEXT_PLAIN);
+            exchange.respond(CoAP.ResponseCode.CONTENT, String.valueOf(isOn), MediaTypeRegistry.TEXT_PLAIN);
+
 
     }
+
+    @Override
+    public void handlePOST(CoapExchange exchange) {
+
+        try{
+            //Empty request
+            if(exchange.getRequestPayload() == null){
+
+                //Update internal status
+                this.isOn = !isOn;
+                this.lightRawActuator.setActive(isOn);
+
+                logger.info("Resource Status Updated: {}", this.isOn);
+
+                exchange.respond(CoAP.ResponseCode.CHANGED);
+            }
+            else
+                exchange.respond(CoAP.ResponseCode.BAD_REQUEST);
+
+        }catch (Exception e){
+            logger.error("Error Handling POST -> {}", e.getLocalizedMessage());
+            exchange.respond(CoAP.ResponseCode.INTERNAL_SERVER_ERROR);
+        }
+
+    }
+
+    @Override
+    public void handlePUT(CoapExchange exchange) {
+
+        try{
+
+            //If the request body is available
+            if(exchange.getRequestPayload() != null){
+
+                boolean submittedValue = Boolean.parseBoolean(new String(exchange.getRequestPayload()));
+
+                logger.info("Submitted value: {}", submittedValue);
+
+                //Update internal status
+                this.isOn = submittedValue;
+                this.lightRawActuator.setActive(this.isOn);
+
+                logger.info("Resource Status Updated: {}", this.isOn);
+
+                exchange.respond(CoAP.ResponseCode.CHANGED);
+            }
+            else
+                exchange.respond(CoAP.ResponseCode.BAD_REQUEST);
+
+        }catch (Exception e){
+            logger.error("Error Handling POST -> {}", e.getLocalizedMessage());
+            exchange.respond(CoAP.ResponseCode.INTERNAL_SERVER_ERROR);
+        }
+
+    }
+    
 }

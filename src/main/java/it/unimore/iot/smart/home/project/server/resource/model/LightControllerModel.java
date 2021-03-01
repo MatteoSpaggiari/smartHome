@@ -1,5 +1,9 @@
 package it.unimore.iot.smart.home.project.server.resource.model;
 
+import it.unimore.iot.smart.home.project.server.resource.raw.LightRawActuator;
+import it.unimore.iot.smart.home.project.server.resource.raw.LightRawColor;
+import it.unimore.iot.smart.home.project.server.resource.raw.LightRawIntensity;
+
 import java.util.HashMap;
 
 /**
@@ -9,62 +13,63 @@ import java.util.HashMap;
  */
 public class LightControllerModel {
 
-    private boolean isActive;
+    private LightRawActuator lightRawActuator;
 
-    // A value from 0 to 100
-    private Double intensity;
+    private LightRawIntensity lightRawIntensity;
 
-    // RGB - each color channel from 0 to 255
-    private HashMap<String, Integer> color;
+    private LightRawColor lightRawColor;
 
-    // Set default values
     {
-        this.isActive = false;
-        this.intensity = 100.0;
-        color = new HashMap<String, Integer>();
-        color.put("Red", 255);
-        color.put("Green", 255);
-        color.put("Blue", 255);
+        this.lightRawActuator = new LightRawActuator();
+        this.lightRawIntensity = new LightRawIntensity();
+        this.lightRawColor = new LightRawColor();
     }
 
-    public LightControllerModel() {}
-
-    public LightControllerModel(boolean isActive, Double intensity, HashMap<String, Integer> color, String locationResourceUri) {
-        this.isActive = isActive;
-        this.intensity = intensity;
-        this.color = color;
+    public LightControllerModel(LightRawActuator lightRawActuator) {
+        this.lightRawActuator = lightRawActuator;
     }
 
-    public boolean isActive() {
-        return isActive;
+    public LightControllerModel(LightRawActuator lightRawActuator, LightRawIntensity lightRawIntensity) {
+        this.lightRawActuator = lightRawActuator;
+        this.lightRawIntensity = lightRawIntensity;
     }
 
-    public void setActive(boolean active) {
-        isActive = active;
+    public LightControllerModel(LightRawActuator lightRawActuator, LightRawIntensity lightRawIntensity, LightRawColor lightRawColor) {
+        this.lightRawActuator = lightRawActuator;
+        this.lightRawIntensity = lightRawIntensity;
+        this.lightRawColor = lightRawColor;
     }
 
-    public Double getIntensity() {
-        return intensity;
+    public LightRawActuator getLightRawActuator() {
+        return lightRawActuator;
     }
 
-    public void setIntensity(Double intensity) {
-        this.intensity = intensity;
+    public void setLightRawActuator(LightRawActuator lightRawActuator) {
+        this.lightRawActuator = lightRawActuator;
     }
 
-    public HashMap<String, Integer> getColor() {
-        return color;
+    public LightRawIntensity getLightRawIntensity() {
+        return lightRawIntensity;
     }
 
-    public void setColor(HashMap<String, Integer> color) {
-        this.color = color;
+    public void setLightRawIntensity(LightRawIntensity lightRawIntensity) {
+        this.lightRawIntensity = lightRawIntensity;
+    }
+
+    public LightRawColor getLightRawColor() {
+        return lightRawColor;
+    }
+
+    public void setLightRawColor(LightRawColor lightRawColor) {
+        this.lightRawColor = lightRawColor;
     }
 
     @Override
     public String toString() {
         final StringBuffer sb = new StringBuffer("LightControllerModel{");
-        sb.append("isActive=").append(isActive);
-        sb.append(", intensity=").append(intensity);
-        sb.append(", color=").append(color);
+        sb.append("lightRawActuator=").append(lightRawActuator);
+        sb.append(", lightRawIntensity=").append(lightRawIntensity);
+        sb.append(", lightRawColor=").append(lightRawColor);
         sb.append('}');
         return sb.toString();
     }

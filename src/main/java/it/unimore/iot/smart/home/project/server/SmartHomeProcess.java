@@ -1,13 +1,10 @@
 package it.unimore.iot.smart.home.project.server;
 
-import it.unimore.iot.smart.home.project.server.resource.coap.CoapLocationResource;
-import it.unimore.iot.smart.home.project.server.resource.coap.CoapPresenceSensorResource;
+import it.unimore.iot.smart.home.project.server.resource.coap.*;
 import it.unimore.iot.smart.home.project.server.resource.model.LightControllerModel;
 import it.unimore.iot.smart.home.project.server.resource.model.LocationDescriptor;
-import it.unimore.iot.smart.home.project.server.resource.raw.LightControllerRawSmartObject;
-import it.unimore.iot.smart.home.project.server.resource.raw.LocationRawDescriptor;
-import it.unimore.iot.smart.home.project.server.resource.raw.PresenceRawSensor;
-import it.unimore.iot.smart.home.project.server.resource.raw.SmartObjectResource;
+import it.unimore.iot.smart.home.project.server.resource.raw.*;
+import org.eclipse.californium.core.CoapResource;
 import org.eclipse.californium.core.CoapServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,16 +24,35 @@ public class SmartHomeProcess extends CoapServer {
 
         //INIT Emulated Physical Sensors and Actuators
         PresenceRawSensor presenceRawSensorLivingRoom = new PresenceRawSensor();
-        LightControllerRawSmartObject lightControllerRawSmartObjectLivingRoom = new LightControllerRawSmartObject(new LightControllerModel());
-        List<SmartObjectResource> smartObjectResourcesLivingRoom = new ArrayList<>();
-        smartObjectResourcesLivingRoom.add(presenceRawSensorLivingRoom);
-        smartObjectResourcesLivingRoom.add(lightControllerRawSmartObjectLivingRoom);
-        LocationRawDescriptor locationRawDescriptor = new LocationRawDescriptor(new LocationDescriptor(UUID.randomUUID().toString(), "living-room", "one", smartObjectResourcesLivingRoom));
+        LightRawActuator lightRawActuatorLivingRoom = new LightRawActuator();
+        LightRawIntensity lightRawIntensityLivingRoom = new LightRawIntensity();
+        LightRawColor lightRawColorLivingRoom = new LightRawColor();
+        LightControllerRawSmartObject lightControllerRawSmartObjectLivingRoom = new LightControllerRawSmartObject(new LightControllerModel(lightRawActuatorLivingRoom, lightRawIntensityLivingRoom, lightRawColorLivingRoom));
 
-        CoapPresenceSensorResource coapPresenceSensorResource = new CoapPresenceSensorResource(deviceId, "presence_sensor", presenceRawSensorLivingRoom);
-        CoapLocationResource coapLocationResource = new CoapLocationResource(deviceId, "living-room", locationRawDescriptor);
+        // List Smart Object in a Location
+        List<SmartObjectResource> listSmartObjectLivingRoom = new ArrayList<SmartObjectResource>();
+        listSmartObjectLivingRoom.add(presenceRawSensorLivingRoom);
+        listSmartObjectLivingRoom.add(lightControllerRawSmartObjectLivingRoom);
 
-        coapLocationResource.add(coapPresenceSensorResource);
+        LocationRawDescriptor locationRawDescriptor = new LocationRawDescriptor(new LocationDescriptor(UUID.randomUUID().toString(), "living-room", "ground-floor", listSmartObjectLivingRoom));
+
+        // Coap Resources
+        CoapLocationResource livingRoomRootResource = new CoapLocationResource(deviceId,"living-room", locationRawDescriptor);
+
+        CoapPresenceSensorResource coapPresenceSensorResource = new CoapPresenceSensorResource(deviceId, "presence-sensor", presenceRawSensorLivingRoom);
+        CoapLightActuatorResource coapLightActuatorResource = new CoapLightActuatorResource(deviceId,"switch", lightRawActuatorLivingRoom);
+        CoapLightIntensityParameterResource coapLightIntensityParameterResource = new CoapLightIntensityParameterResource(deviceId, "intensity", lightRawIntensityLivingRoom);
+        CoapLightColorParameterResource coapLightColorParameterResource = new CoapLightColorParameterResource(deviceId, "color", lightRawColorLivingRoom);
+
+        CoapLightControllerResource coapLightControllerResource = new CoapLightControllerResource(deviceId,"ligth-controller-1", lightControllerRawSmartObjectLivingRoom);
+        coapLightControllerResource.add(coapLightActuatorResource);
+        coapLightControllerResource.add(coapLightIntensityParameterResource);
+        coapLightControllerResource.add(coapLightColorParameterResource);
+
+        livingRoomRootResource.add(coapPresenceSensorResource);
+        livingRoomRootResource.add(coapLightControllerResource);
+
+        this.add(livingRoomRootResource);
 
     }
 
@@ -52,6 +68,9 @@ public class SmartHomeProcess extends CoapServer {
             if(!resource.getURI().equals("/.well-known")){
                 resource.getChildren().stream().forEach(childResource -> {
                     logger.info("\t Resource {} -> URI: {} (Observable: {})", childResource.getName(), childResource.getURI(), childResource.isObservable());
+                    childResource.getChildren().stream().forEach(childChildResource -> {
+                        logger.info("\t Resource {} -> URI: {} (Observable: {})", childChildResource.getName(), childChildResource.getURI(), childChildResource.isObservable());
+                    });
                 });
             }
         });
