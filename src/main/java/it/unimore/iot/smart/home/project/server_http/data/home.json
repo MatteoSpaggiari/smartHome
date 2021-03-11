@@ -1,0 +1,75 @@
+{
+  "id": "1",
+  "nation": "Italia",
+  "city": "Mantova",
+  "address": "Via Cadore, 34",
+  "locations":
+  [
+    {
+      "id": "1",
+      "room": "Living room",
+      "floor": "Ground floor",
+      "devices":
+      [
+        {
+          "id": "1",
+          "name": "Presence Sensor",
+          "software_version": 0.1,
+          "manufacturer": "demo",
+          "host": "127.0.0.1",
+          "port": "5683",
+          "path": "presence_sensor",
+          "type": "iot:presence_sensor"
+        },
+        {
+          "id": "2",
+          "name": "Light Controller",
+          "software_version": 0.1,
+          "manufacturer": "demo",
+          "host": "127.0.0.1",
+          "port": "5783",
+          "path": "light_controller",
+          "type": "iot:light_controller"
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "room": "Bedroom",
+      "floor": "First floor",
+      "devices":
+      [
+        {
+          "id": "3",
+          "name": "Presence Sensor 2",
+          "software_version": 0.1,
+          "manufacturer": "demo",
+          "host": "127.0.0.1",
+          "port": "5883",
+          "path": "presence_sensor",
+          "type": "iot:presence_sensor"
+        },
+        {
+          "id": "4",
+          "name": "Light Controller 2",
+          "software_version": 0.1,
+          "manufacturer": "demo",
+          "host": "127.0.0.1",
+          "port": "5983",
+          "path": "light_controller",
+          "type": "iot:light_controller"
+        },
+        {
+          "id": "5",
+          "name": "Light Controller 3",
+          "software_version": 0.1,
+          "manufacturer": "demo",
+          "host": "127.0.0.1",
+          "port": "5984",
+          "path": "light_controller",
+          "type": "iot:light_controller"
+        }
+      ]
+    }
+  ]
+}
