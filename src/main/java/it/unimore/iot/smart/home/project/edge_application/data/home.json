@@ -1,0 +1,125 @@
+{
+  "id": "1",
+  "nation": "Italia",
+  "city": "Mantova",
+  "address": "Via Cadore, 34",
+  "locations":
+  [
+    {
+      "id": "1",
+      "room": "Living room",
+      "floor": "Ground floor",
+      "devices":
+      [
+        {
+          "id": "1",
+          "name": "Presence Sensor",
+          "software_version": 0.1,
+          "manufacturer": "demo",
+          "host": "127.0.0.1",
+          "port": "5683",
+          "path": "presence_sensor",
+          "type": "presence_sensor",
+          "presence": true
+        },
+        {
+          "id": "2",
+          "name": "Light Controller",
+          "software_version": 0.1,
+          "manufacturer": "demo",
+          "host": "127.0.0.1",
+          "port": "5783",
+          "path": "light_controller",
+          "type": "light_controller",
+          "active": true,
+          "intensity": 80.0,
+          "color":
+          {
+            "red": 230,
+            "green": 0,
+            "blue": 0
+          }
+        }
+      ],
+      "policy":
+      {
+        "active": false,
+        "light_intensity": 80,
+        "light_color":
+        {
+          "red": 230,
+          "green": 230,
+          "blue": 230
+        },
+        "sweet_night": true
+      }
+    },
+    {
+      "id": "2",
+      "room": "Bedroom",
+      "floor": "First floor",
+      "devices":
+      [
+        {
+          "id": "3",
+          "name": "Presence Sensor 2",
+          "software_version": 0.1,
+          "manufacturer": "demo",
+          "host": "127.0.0.1",
+          "port": "5883",
+          "path": "presence_sensor",
+          "type": "presence_sensor",
+          "presence": false
+        },
+        {
+          "id": "4",
+          "name": "Light Controller 2",
+          "software_version": 0.1,
+          "manufacturer": "demo",
+          "host": "127.0.0.1",
+          "port": "5983",
+          "path": "light_controller",
+          "type": "light_controller",
+          "active": false,
+          "intensity": 40.0,
+          "color":
+          {
+            "red": 200,
+            "green": 60,
+            "blue": 60
+          }
+        },
+        {
+          "id": "5",
+          "name": "Light Controller 3",
+          "software_version": 0.1,
+          "manufacturer": "demo",
+          "host": "127.0.0.1",
+          "port": "5984",
+          "path": "light_controller",
+          "type": "light_controller",
+          "active": false,
+          "intensity": 70.0,
+          "color":
+          {
+            "red": 0,
+            "green": 200,
+            "blue": 60
+          }
+        }
+      ],
+      "policy":
+      {
+        "active": false,
+        "light_intensity": 100,
+        "light_color":
+        {
+          "red": 230,
+          "green": 0,
+          "blue": 0
+        },
+        "sweet_night": false
+      }
+    }
+  ]
+}
