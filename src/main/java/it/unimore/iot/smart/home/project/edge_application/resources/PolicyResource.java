@@ -23,7 +23,7 @@ import java.util.Optional;
 @Api("IoT Location Inventory Endpoint")
 public class PolicyResource {
 
-    final protected Logger logger = LoggerFactory.getLogger(PolicyResource.class);
+    protected final static Logger logger = LoggerFactory.getLogger(PolicyResource.class);
 
     ObjectMapper objectMapper;
 
@@ -51,7 +51,7 @@ public class PolicyResource {
             if(locationId == null)
                 return Response.status(Response.Status.NOT_FOUND).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.NOT_FOUND.getStatusCode(),"Location does not exist !")).build();
 
-            Optional<PolicyDescriptor> policyDescriptor = this.conf.getInventoryDataManager().getPolicy(locationId);
+            Optional<PolicyDescriptor> policyDescriptor = this.conf.getDataCollectorPolicyManager().getPolicy(locationId);
 
             if(!policyDescriptor.isPresent())
                 return Response.status(Response.Status.NOT_FOUND).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.NOT_FOUND.getStatusCode(),"Policy Not Found !")).build();
@@ -84,12 +84,12 @@ public class PolicyResource {
                 return Response.status(Response.Status.BAD_REQUEST).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(),"Invalid request ! Check Location Id")).build();
 
             //Check if the device is available and correctly registered otherwise a 404 response will be sent to the client
-            if(!this.conf.getInventoryDataManager().getPolicy(locationId).isPresent())
+            if(!this.conf.getDataCollectorPolicyManager().getPolicy(locationId).isPresent())
                 return Response.status(Response.Status.NOT_FOUND).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.NOT_FOUND.getStatusCode(),"Policy not found !")).build();
 
             PolicyDescriptor policyDescriptor = (PolicyDescriptor) policyUpdateRequest;
 
-            this.conf.getInventoryDataManager().updatePolicy(locationId, policyDescriptor);
+            this.conf.getDataCollectorPolicyManager().updatePolicy(locationId, policyDescriptor);
 
             return Response.noContent().build();
 

@@ -18,7 +18,9 @@
           "manufacturer": "demo",
           "host": "127.0.0.1",
           "port": "5683",
-          "path": "presence_sensor",
+          "resource_paths": [
+            "presence-sensor"
+          ],
           "type": "presence_sensor",
           "presence": true
         },
@@ -29,7 +31,11 @@
           "manufacturer": "demo",
           "host": "127.0.0.1",
           "port": "5783",
-          "path": "light_controller",
+          "resource_paths": [
+            "light-controller/switch",
+            "light-controller/intensity",
+            "light-controller/color"
+          ],
           "type": "light_controller",
           "active": true,
           "intensity": 80.0,
@@ -44,6 +50,7 @@
       "policy":
       {
         "active": false,
+        "light_switch": false,
         "light_intensity": 80,
         "light_color":
         {
@@ -67,7 +74,9 @@
           "manufacturer": "demo",
           "host": "127.0.0.1",
           "port": "5883",
-          "path": "presence_sensor",
+          "resource_paths": [
+            "presence-sensor"
+          ],
           "type": "presence_sensor",
           "presence": false
         },
@@ -78,7 +87,11 @@
           "manufacturer": "demo",
           "host": "127.0.0.1",
           "port": "5983",
-          "path": "light_controller",
+          "resource_paths": [
+            "light-controller/switch",
+            "light-controller/intensity",
+            "light-controller/color"
+          ],
           "type": "light_controller",
           "active": false,
           "intensity": 40.0,
@@ -96,7 +109,11 @@
           "manufacturer": "demo",
           "host": "127.0.0.1",
           "port": "5984",
-          "path": "light_controller",
+          "resource_paths": [
+            "light-controller/switch",
+            "light-controller/intensity",
+            "light-controller/color"
+          ],
           "type": "light_controller",
           "active": false,
           "intensity": 70.0,
@@ -110,7 +127,8 @@
       ],
       "policy":
       {
-        "active": false,
+        "active": true,
+        "light_switch": false,
         "light_intensity": 100,
         "light_color":
         {

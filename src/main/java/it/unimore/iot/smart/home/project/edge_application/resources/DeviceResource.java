@@ -32,7 +32,7 @@ import java.util.Optional;
 @Api("IoT Location Inventory Endpoint")
 public class DeviceResource {
 
-    final protected Logger logger = LoggerFactory.getLogger(DeviceResource.class);
+    protected final static Logger logger = LoggerFactory.getLogger(DeviceResource.class);
 
     ObjectMapper objectMapper;
 
@@ -62,9 +62,9 @@ public class DeviceResource {
 
             //No filter applied
             if(deviceType == null)
-                deviceList = this.conf.getInventoryDataManager().getDevicesList(locationId);
+                deviceList = this.conf.getDataCollectorPolicyManager().getDevicesList(locationId);
             else
-                deviceList = this.conf.getInventoryDataManager().getDevicesListByType(locationId, deviceType);
+                deviceList = this.conf.getDataCollectorPolicyManager().getDevicesListByType(locationId, deviceType);
 
             if(deviceList == null)
                 return Response.status(Response.Status.NOT_FOUND).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.NOT_FOUND.getStatusCode(),"Devices Not Found !")).build();
@@ -94,7 +94,7 @@ public class DeviceResource {
             if(deviceId == null)
                 return Response.status(Response.Status.BAD_REQUEST).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(),"Invalid Device Id Provided !")).build();
 
-            Optional<DeviceDescriptor> deviceDescriptor = this.conf.getInventoryDataManager().getDevice(locationId, deviceId);
+            Optional<DeviceDescriptor> deviceDescriptor = this.conf.getDataCollectorPolicyManager().getDevice(locationId, deviceId);
 
             if(!deviceDescriptor.isPresent())
                 return Response.status(Response.Status.NOT_FOUND).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.NOT_FOUND.getStatusCode(),"Device Not Found !")).build();
@@ -129,12 +129,12 @@ public class DeviceResource {
             if(deviceType.equals(DeviceType.PRESENCE_SENSOR.getValue())) {
                 PresenceSensorCreationRequest presenceSensorCreationRequest = objectMapper.treeToValue(deviceCreationRequest, PresenceSensorCreationRequest.class);
                 PresenceSensorDescriptor presenceSensorDescriptor = (PresenceSensorDescriptor) presenceSensorCreationRequest;
-                newDeviceDescriptor = this.conf.getInventoryDataManager().createNewDevice(locationId, presenceSensorDescriptor);
+                newDeviceDescriptor = this.conf.getDataCollectorPolicyManager().createNewDevice(locationId, presenceSensorDescriptor);
             // If the device type is a Light Controller instantiate a Light Controller
             } else if(deviceType.equals(DeviceType.LIGHT_CONTROLLER.getValue())) {
                 LightControllerCreationRequest lightControllerCreationRequest = objectMapper.treeToValue(deviceCreationRequest, LightControllerCreationRequest.class);
                 LightControllerDescriptor lightControllerDescriptor = (LightControllerDescriptor) lightControllerCreationRequest;
-                newDeviceDescriptor = this.conf.getInventoryDataManager().createNewDevice(locationId, lightControllerDescriptor);
+                newDeviceDescriptor = this.conf.getDataCollectorPolicyManager().createNewDevice(locationId, lightControllerDescriptor);
             } else {
                 return Response.status(Response.Status.BAD_REQUEST).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(),"Device type not recognized")).build();
             }
@@ -169,7 +169,7 @@ public class DeviceResource {
                 return Response.status(Response.Status.BAD_REQUEST).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(),"Invalid request ! Check Device Id")).build();
 
             //Check if the device is available and correctly registered otherwise a 404 response will be sent to the client
-            if(!this.conf.getInventoryDataManager().getDevice(locationId, deviceId).isPresent())
+            if(!this.conf.getDataCollectorPolicyManager().getDevice(locationId, deviceId).isPresent())
                 return Response.status(Response.Status.NOT_FOUND).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.NOT_FOUND.getStatusCode(),"Device not found !")).build();
 
             DeviceDescriptor deviceDescriptor = new DeviceDescriptor();
@@ -178,12 +178,12 @@ public class DeviceResource {
             if(deviceType.equals(DeviceType.PRESENCE_SENSOR.getValue())) {
                 PresenceSensorUpdateRequest presenceSensorUpdateRequest = objectMapper.treeToValue(deviceUpdateRequest, PresenceSensorUpdateRequest.class);
                 PresenceSensorDescriptor presenceSensorDescriptor = (PresenceSensorDescriptor) presenceSensorUpdateRequest;
-                deviceDescriptor = this.conf.getInventoryDataManager().updateDevice(locationId, presenceSensorDescriptor);
+                deviceDescriptor = this.conf.getDataCollectorPolicyManager().updateDevice(locationId, presenceSensorDescriptor);
                 // If the device type is a Light Controller instantiate a Light Controller
             } else if(deviceType.equals(DeviceType.LIGHT_CONTROLLER.getValue())) {
                 LightControllerUpdateRequest lightControllerUpdateRequest = objectMapper.treeToValue(deviceUpdateRequest, LightControllerUpdateRequest.class);
                 LightControllerDescriptor lightControllerDescriptor = (LightControllerDescriptor) lightControllerUpdateRequest;
-                deviceDescriptor = this.conf.getInventoryDataManager().updateDevice(locationId, lightControllerDescriptor);
+                deviceDescriptor = this.conf.getDataCollectorPolicyManager().updateDevice(locationId, lightControllerDescriptor);
             } else {
                 return Response.status(Response.Status.BAD_REQUEST).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(),"Device type not recognized")).build();
             }
@@ -214,12 +214,12 @@ public class DeviceResource {
                 return Response.status(Response.Status.BAD_REQUEST).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(),"Invalid Device Id Provided !")).build();
 
             //Check if the device is available or not
-            Optional<DeviceDescriptor> deviceDescriptor = this.conf.getInventoryDataManager().getDevice(locationId, deviceId);
+            Optional<DeviceDescriptor> deviceDescriptor = this.conf.getDataCollectorPolicyManager().getDevice(locationId, deviceId);
             if(!deviceDescriptor.isPresent())
                 return Response.status(Response.Status.NOT_FOUND).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.NOT_FOUND.getStatusCode(),"Device Not Found !")).build();
 
             //Delete the device
-            this.conf.getInventoryDataManager().deleteDevice(locationId, deviceId);
+            this.conf.getDataCollectorPolicyManager().deleteDevice(locationId, deviceId);
 
             return Response.noContent().build();
 

@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
  */
 public class DefaultIotInventoryDataManger implements IIotInventoryDataManager {
 
-    private HashMap<String, LocationDescriptor> locationMap;
+    protected HashMap<String, LocationDescriptor> locationMap;
 
     public DefaultIotInventoryDataManger() {
         this.locationMap = new HashMap<>();

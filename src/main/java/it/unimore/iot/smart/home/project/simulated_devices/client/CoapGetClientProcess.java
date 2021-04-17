@@ -24,7 +24,7 @@ public class CoapGetClientProcess {
 
 	private final static Logger logger = LoggerFactory.getLogger(CoapGetClientProcess.class);
 
-	private static final String COAP_ENDPOINT = "coap://127.0.0.1:5783/light-controller/switch/";
+	private static final String COAP_ENDPOINT = "coap://127.0.0.1:5984/light-controller/color";
 
 	public static void main(String[] args) {
 		

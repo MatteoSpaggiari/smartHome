@@ -1,6 +1,7 @@
 package it.unimore.iot.smart.home.project.simulated_devices.server.resource.coap;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.unimore.iot.smart.home.project.simulated_devices.server.resource.raw.LightRawColor;
 import it.unimore.iot.smart.home.project.simulated_devices.server.resource.raw.ResourceDataListener;
@@ -50,6 +51,7 @@ public class CoapLightColorParameterResource extends CoapResource {
             this.deviceId = deviceId;
 
             this.lightRawColor = lightRawColor;
+            this.updatedColorValue = lightRawColor.loadUpdatedValue();
 
             //Jackson Object Mapper + Ignore Null Fields in order to properly generate the SenML Payload
             this.objectMapper = new ObjectMapper();
@@ -64,19 +66,18 @@ public class CoapLightColorParameterResource extends CoapResource {
             getAttributes().addAttribute("if", CoreInterfaces.CORE_P.getValue());
             getAttributes().addAttribute("ct", Integer.toString(MediaTypeRegistry.APPLICATION_SENML_JSON));
             getAttributes().addAttribute("ct", Integer.toString(MediaTypeRegistry.TEXT_PLAIN));
+
+            this.lightRawColor.addDataListener(new ResourceDataListener<HashMap<String, Integer>>() {
+                @Override
+                public void onDataChanged(SmartObjectResource<HashMap<String, Integer>> resource, HashMap<String, Integer> updatedValue) {
+                    updatedColorValue = updatedValue;
+                    changed();
+                }
+            });
+
         }
         else
             logger.error("Error -> NULL Raw Reference !");
-
-        this.lightRawColor.addDataListener(new ResourceDataListener<HashMap<String, Integer>>() {
-
-            @Override
-            public void onDataChanged(SmartObjectResource<HashMap<String, Integer>> resource, HashMap<String, Integer> updatedValue) {
-                updatedColorValue = updatedValue;
-                changed();
-            }
-        });
-
     }
 
     /**
@@ -142,18 +143,18 @@ public class CoapLightColorParameterResource extends CoapResource {
             //If the request body is available
             if(exchange.getRequestPayload() != null){
 
-                double submittedValue = Double.parseDouble(new String(exchange.getRequestPayload()));
+                String submittedValue = new String(exchange.getRequestPayload());
 
                 logger.info("Submitted value: {}", submittedValue);
 
-                // Prova da modificare
-                HashMap<String, Integer> colorReceived = new HashMap<>();
-                colorReceived.put("Red", 255);
-                colorReceived.put("Green", 0);
-                colorReceived.put("Blue", 0);
+                JsonNode node = objectMapper.readTree(new String(exchange.getRequestPayload()));
+                HashMap<String, Integer> colorMap = new HashMap<String, Integer>();
+                colorMap.put("red", node.get("red").asInt());
+                colorMap.put("green", node.get("green").asInt());
+                colorMap.put("blue", node.get("blue").asInt());
 
                 //Update internal status
-                this.updatedColorValue = colorReceived;
+                this.updatedColorValue = colorMap;
                 this.lightRawColor.setUpdatedValue(this.updatedColorValue);
 
                 logger.info("Resource Status Updated: {}", this.updatedColorValue);

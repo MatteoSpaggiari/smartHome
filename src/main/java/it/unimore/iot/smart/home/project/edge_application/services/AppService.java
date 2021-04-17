@@ -9,7 +9,7 @@ import it.unimore.iot.smart.home.project.edge_application.DataCollectorPolicyMan
 import it.unimore.iot.smart.home.project.edge_application.resources.DeviceResource;
 import it.unimore.iot.smart.home.project.edge_application.resources.LocationResource;
 import it.unimore.iot.smart.home.project.edge_application.resources.PolicyResource;
-import it.unimore.iot.smart.home.project.edge_application.utils.DummyDataGenerator;
+import it.unimore.iot.smart.home.project.edge_application.utils.LoadInitialData;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
 
 import javax.servlet.DispatcherType;
@@ -28,16 +28,16 @@ public class AppService extends Application<AppConfig> {
 
     public void run(AppConfig appConfig, Environment environment) throws Exception {
 
-        //Create Demo Locations, Device and Users
-        DummyDataGenerator.loadDataBuildingFromFileJson(appConfig.getInventoryDataManager());
+        // Load the initial data from file JSON
+        LoadInitialData.loadDataBuildingFromFileJson(appConfig.getDataCollectorPolicyManager());
 
-        //Add our defined resources
+        // Start the Policy Manager
+        appConfig.getDataCollectorPolicyManager().init();
+
+        // Add our defined resources
         environment.jersey().register(new LocationResource(appConfig));
         environment.jersey().register(new DeviceResource(appConfig));
         environment.jersey().register(new PolicyResource(appConfig));
-
-        //Application Data Collector & Policy Manager
-        dataCollectorPolicyManager = new DataCollectorPolicyManager(appConfig.getInventoryDataManager());
 
         // Enable CORS headers
         final FilterRegistration.Dynamic cors = environment.servlets().addFilter("CORS", CrossOriginFilter.class);

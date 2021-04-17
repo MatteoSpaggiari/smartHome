@@ -3,6 +3,7 @@ package it.unimore.iot.smart.home.project.edge_application.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * @author Matteo Spaggiari, 262475@studenti.unimore.it - matteo.spaggiari78@gmail.com
@@ -29,8 +30,8 @@ public class LightControllerDescriptor extends DeviceDescriptor {
     public LightControllerDescriptor() {
     }
 
-    public LightControllerDescriptor(String id, String name, Double software_version, String manufacturer, String host, String port, String path, String type, Boolean isActive, Double intensity, HashMap<String, Integer> color) {
-        super(id, name, software_version, manufacturer, host, port, path, type);
+    public LightControllerDescriptor(String id, String name, Double software_version, String manufacturer, String host, String port, List<String> resourcePaths, String type, Boolean isActive, Double intensity, HashMap<String, Integer> color) {
+        super(id, name, software_version, manufacturer, host, port, resourcePaths, type);
         this.isActive = isActive;
         this.intensity = intensity;
         this.color = color;

@@ -46,6 +46,7 @@ public class CoapLightIntensityParameterResource extends CoapResource {
             this.deviceId = deviceId;
 
             this.lightRawIntensity = lightRawIntensity;
+            this.updatedIntensityValue = lightRawIntensity.loadUpdatedValue();
 
             //Jackson Object Mapper + Ignore Null Fields in order to properly generate the SenML Payload
             this.objectMapper = new ObjectMapper();
@@ -60,18 +61,18 @@ public class CoapLightIntensityParameterResource extends CoapResource {
             getAttributes().addAttribute("if", CoreInterfaces.CORE_P.getValue());
             getAttributes().addAttribute("ct", Integer.toString(MediaTypeRegistry.APPLICATION_SENML_JSON));
             getAttributes().addAttribute("ct", Integer.toString(MediaTypeRegistry.TEXT_PLAIN));
+
+            this.lightRawIntensity.addDataListener(new ResourceDataListener<Double>() {
+
+                @Override
+                public void onDataChanged(SmartObjectResource<Double> resource, Double updatedValue) {
+                    updatedIntensityValue = updatedValue;
+                    changed();
+                }
+            });
         }
         else
             logger.error("Error -> NULL Raw Reference !");
-
-        this.lightRawIntensity.addDataListener(new ResourceDataListener<Double>() {
-
-            @Override
-            public void onDataChanged(SmartObjectResource<Double> resource, Double updatedValue) {
-                updatedIntensityValue = updatedValue;
-                changed();
-            }
-        });
 
     }
 

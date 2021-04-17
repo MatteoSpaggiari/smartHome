@@ -14,7 +14,7 @@ import java.util.List;
  * @author Matteo Spaggiari, 262475@studenti.unimore.it - matteo.spaggiari78@gmail.com
  * @project smart-home-project
  */
-public class DummyDataGenerator {
+public class LoadInitialData {
 
     public static void loadDataBuildingFromFileJson(IIotInventoryDataManager inventoryDataManager){
 
@@ -22,7 +22,7 @@ public class DummyDataGenerator {
 
             ObjectMapper objectMapper = new ObjectMapper();
             // I read JSON file and turn it into Json Node
-            JsonNode dataFromJson = objectMapper.readTree(new File("src/main/java/it/unimore/iot/smart/home/project/edge_application/data/home.json"));
+            JsonNode dataFromJson = objectMapper.readTree(new File("src/main/java/it/unimore/iot/smart/home/project/data/home.json"));
             JsonNode locations = dataFromJson.get("locations");
             for(JsonNode location : locations) {
                 // Retrieve the policy

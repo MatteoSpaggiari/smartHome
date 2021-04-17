@@ -27,6 +27,14 @@ public class LightRawColor extends SmartObjectResource<HashMap<String, Integer>>
         super(UUID.randomUUID().toString(), RESOURCE_TYPE);
     }
 
+    public LightRawColor(Integer red, Integer green, Integer blue) {
+        super(UUID.randomUUID().toString(), RESOURCE_TYPE);
+        this.updatedValue = new HashMap<String, Integer>();
+        this.updatedValue.put("Red", red);
+        this.updatedValue.put("Green", green);
+        this.updatedValue.put("Blue", blue);
+    }
+
     public HashMap<String, Integer> getUpdatedValue() {
         return updatedValue;
     }

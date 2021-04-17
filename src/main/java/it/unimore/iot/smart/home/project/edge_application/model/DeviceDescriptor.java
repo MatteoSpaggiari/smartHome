@@ -2,6 +2,8 @@ package it.unimore.iot.smart.home.project.edge_application.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.List;
+
 /**
  * @author Matteo Spaggiari, 262475@studenti.unimore.it - matteo.spaggiari78@gmail.com
  * @project smart-home-project
@@ -21,21 +23,22 @@ public class DeviceDescriptor {
 
     private String port;
 
-    private String path;
+    @JsonProperty("resource_paths")
+    private List<String> resourcePaths;
 
     private String type;
 
     public DeviceDescriptor() {
     }
 
-    public DeviceDescriptor(String id, String name, Double softwareVersion, String manufacturer, String host, String port, String path, String type) {
+    public DeviceDescriptor(String id, String name, Double softwareVersion, String manufacturer, String host, String port, List<String> resourcePaths, String type) {
         this.id = id;
         this.name = name;
         this.softwareVersion = softwareVersion;
         this.manufacturer = manufacturer;
         this.host = host;
         this.port = port;
-        this.path = path;
+        this.resourcePaths = resourcePaths;
         this.type = type;
     }
 
@@ -87,12 +90,12 @@ public class DeviceDescriptor {
         this.port = port;
     }
 
-    public String getPath() {
-        return path;
+    public List<String> getResourcePaths() {
+        return resourcePaths;
     }
 
-    public void setPath(String path) {
-        this.path = path;
+    public void setResourcePaths(List<String> resourcePaths) {
+        this.resourcePaths = resourcePaths;
     }
 
     public String getType() {
@@ -108,11 +111,11 @@ public class DeviceDescriptor {
         final StringBuffer sb = new StringBuffer("DeviceDescriptor{");
         sb.append("id='").append(id).append('\'');
         sb.append(", name='").append(name).append('\'');
-        sb.append(", software_version=").append(softwareVersion);
+        sb.append(", softwareVersion=").append(softwareVersion);
         sb.append(", manufacturer='").append(manufacturer).append('\'');
         sb.append(", host='").append(host).append('\'');
         sb.append(", port='").append(port).append('\'');
-        sb.append(", path='").append(path).append('\'');
+        sb.append(", resourcePaths=").append(resourcePaths);
         sb.append(", type='").append(type).append('\'');
         sb.append('}');
         return sb.toString();

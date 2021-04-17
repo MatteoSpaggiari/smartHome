@@ -29,9 +29,13 @@ public class CoapLightActuatorResource extends CoapResource {
 
     private LightRawActuator lightRawActuator;
 
-    private Boolean isOn = true;
+    private Boolean isOn;
 
     private String deviceId;
+
+    {
+        this.isOn = true;
+    }
 
     public CoapLightActuatorResource(String deviceId, String name, LightRawActuator lightRawActuator) {
         super(name);
@@ -41,6 +45,7 @@ public class CoapLightActuatorResource extends CoapResource {
             this.deviceId = deviceId;
 
             this.lightRawActuator = lightRawActuator;
+            this.isOn = lightRawActuator.loadUpdatedValue();
 
             //Jackson Object Mapper + Ignore Null Fields in order to properly generate the SenML Payload
             this.objectMapper = new ObjectMapper();
@@ -83,7 +88,7 @@ public class CoapLightActuatorResource extends CoapResource {
             SenMLRecord senMLRecord = new SenMLRecord();
             senMLRecord.setBn(String.format("%s:%s", this.deviceId, this.getName()));
             senMLRecord.setBver(SENSOR_VERSION);
-            senMLRecord.setVb(isOn);
+            senMLRecord.setVb(this.isOn);
             senMLRecord.setT(System.currentTimeMillis());
 
             senMLPack.add(senMLRecord);
@@ -109,7 +114,7 @@ public class CoapLightActuatorResource extends CoapResource {
             else
                 exchange.respond(CoAP.ResponseCode.INTERNAL_SERVER_ERROR);
         }
-        //Otherwise respond with the default textplain payload
+        //Otherwise respond with the default text/plain payload
         else
             exchange.respond(CoAP.ResponseCode.CONTENT, String.valueOf(this.isOn), MediaTypeRegistry.TEXT_PLAIN);
 
@@ -124,8 +129,8 @@ public class CoapLightActuatorResource extends CoapResource {
             if(exchange.getRequestPayload() == null){
 
                 //Update internal status
-                this.isOn = !isOn;
-                this.lightRawActuator.setActive(isOn);
+                this.isOn = !this.isOn;
+                this.lightRawActuator.setActive(this.isOn);
 
                 logger.info("Resource Status Updated: {}", this.isOn);
 
@@ -157,7 +162,7 @@ public class CoapLightActuatorResource extends CoapResource {
                 this.isOn = submittedValue;
                 this.lightRawActuator.setActive(this.isOn);
 
-                logger.info("Resource Status Updated: {}", this.isOn);
+                logger.info("Resource Status Updated: {}", this.lightRawActuator.getActive());
 
                 exchange.respond(CoAP.ResponseCode.CHANGED);
             }

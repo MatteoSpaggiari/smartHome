@@ -23,6 +23,11 @@ public class LightRawIntensity extends SmartObjectResource<Double> {
         super(UUID.randomUUID().toString(), RESOURCE_TYPE);
     }
 
+    public LightRawIntensity(Double intensity) {
+        super(UUID.randomUUID().toString(), RESOURCE_TYPE);
+        this.updatedValue = intensity;
+    }
+
     public Double getUpdatedValue() {
         return updatedValue;
     }
@@ -36,6 +41,5 @@ public class LightRawIntensity extends SmartObjectResource<Double> {
     public Double loadUpdatedValue() {
         return this.updatedValue;
     }
-
 
 }

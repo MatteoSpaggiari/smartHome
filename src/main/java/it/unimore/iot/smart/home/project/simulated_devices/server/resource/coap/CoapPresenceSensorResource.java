@@ -37,7 +37,6 @@ public class CoapPresenceSensorResource extends CoapResource {
         this.isPresence = false;
     }
 
-
     public CoapPresenceSensorResource(String deviceId, String name, PresenceRawSensor presenceRawSensor) {
         super(name);
 
@@ -46,6 +45,7 @@ public class CoapPresenceSensorResource extends CoapResource {
             this.deviceId = deviceId;
 
             this.presenceRawSensor = presenceRawSensor;
+            this.isPresence = presenceRawSensor.loadUpdatedValue();
 
             //Jackson Object Mapper + Ignore Null Fields in order to properly generate the SenML Payload
             this.objectMapper = new ObjectMapper();
@@ -88,7 +88,7 @@ public class CoapPresenceSensorResource extends CoapResource {
             SenMLRecord senMLRecord = new SenMLRecord();
             senMLRecord.setBn(String.format("%s:%s", this.deviceId, this.getName()));
             senMLRecord.setBver(VERSION);
-            senMLRecord.setVb(isPresence);
+            senMLRecord.setVb(this.isPresence);
             senMLRecord.setT(System.currentTimeMillis());
 
             senMLPack.add(senMLRecord);
@@ -114,7 +114,7 @@ public class CoapPresenceSensorResource extends CoapResource {
             else
                 exchange.respond(CoAP.ResponseCode.INTERNAL_SERVER_ERROR);
         }
-        //Otherwise respond with the default textplain payload
+        //Otherwise respond with the default text/plain payload
         else
             exchange.respond(CoAP.ResponseCode.CONTENT, String.valueOf(this.isPresence), MediaTypeRegistry.TEXT_PLAIN);
 

@@ -10,7 +10,7 @@ public class PresenceSensorServer extends CoapServer {
 
     private final static Logger logger = LoggerFactory.getLogger(PresenceSensorServer.class);
 
-    public PresenceSensorServer(int port, String id) {
+    public PresenceSensorServer(int port, String id, Boolean active) {
 
         super(port);
         String deviceId = String.format("dipi:iot:%s", id);

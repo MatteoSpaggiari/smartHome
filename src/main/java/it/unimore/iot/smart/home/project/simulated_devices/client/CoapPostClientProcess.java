@@ -17,15 +17,15 @@ import java.io.IOException;
  * The simple client send a POST request to a target CoAP Resource with some custom request parameters
  * and Payload (if necessary)
  *
- * @author Marco Picone, Ph.D. - picone.m@gmail.com
- * @project coap-demo-smartobject
+ * @author Matteo Spaggiari
+ * @project smart-home-project
  * @created 20/10/2020 - 09:19
  */
 public class CoapPostClientProcess {
 
 	private final static Logger logger = LoggerFactory.getLogger(CoapPostClientProcess.class);
 
-	private static final String COAP_ENDPOINT = "coap://127.0.0.1:5683/compressor/switch";
+	private static final String COAP_ENDPOINT = "coap://127.0.0.1:5983/light-controller/switch";
 
 	public static void main(String[] args) {
 		

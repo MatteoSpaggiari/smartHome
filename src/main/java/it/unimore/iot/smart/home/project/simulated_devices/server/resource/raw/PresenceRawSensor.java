@@ -31,11 +31,15 @@ public class PresenceRawSensor extends SmartObjectResource<Boolean> {
 
     private static final long PRESENCE_DETECTION_TIME_MAX = 5000;
 
+    {
+        this.isPresence = false;
+    }
+
     // Constructor
     public PresenceRawSensor() {
         super(UUID.randomUUID().toString(), RESOURCE_TYPE);
         this.isPresence = false;
-        //behaviorSimulation();
+        behaviorSimulation();
     }
 
     // Getters and Setters

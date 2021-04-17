@@ -24,6 +24,7 @@ public class LocationDescriptor {
 
     {
         this.devices = new HashMap<String, DeviceDescriptor>();
+        this.policyDescriptor = new PolicyDescriptor();
     }
 
     public LocationDescriptor() {

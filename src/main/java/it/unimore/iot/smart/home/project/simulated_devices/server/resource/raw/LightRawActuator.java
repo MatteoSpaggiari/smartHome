@@ -23,6 +23,11 @@ public class LightRawActuator extends SmartObjectResource<Boolean> {
         super(UUID.randomUUID().toString(), RESOURCE_TYPE);
     }
 
+    public LightRawActuator(Boolean active) {
+        super(UUID.randomUUID().toString(), RESOURCE_TYPE);
+        this.isActive = active;
+    }
+
     public Boolean getActive() {
         return isActive;
     }
@@ -36,7 +41,5 @@ public class LightRawActuator extends SmartObjectResource<Boolean> {
     public Boolean loadUpdatedValue() {
         return this.isActive;
     }
-
-
 
 }
