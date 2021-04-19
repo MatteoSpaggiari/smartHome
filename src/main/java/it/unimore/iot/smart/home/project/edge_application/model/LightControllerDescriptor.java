@@ -1,7 +1,6 @@
 package it.unimore.iot.smart.home.project.edge_application.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.HashMap;
 import java.util.List;
 

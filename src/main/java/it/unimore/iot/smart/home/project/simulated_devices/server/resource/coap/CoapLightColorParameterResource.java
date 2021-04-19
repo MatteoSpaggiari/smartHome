@@ -15,10 +15,13 @@ import org.eclipse.californium.core.coap.MediaTypeRegistry;
 import org.eclipse.californium.core.server.resources.CoapExchange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.util.HashMap;
 import java.util.Optional;
 
+/**
+ * @author Matteo Spaggiari, 262475@studenti.unimore.it - matteo.spaggiari78@gmail.com
+ * @project smart-home-project
+ */
 public class CoapLightColorParameterResource extends CoapResource {
 
     private final static Logger logger = LoggerFactory.getLogger(CoapLightColorParameterResource.class);

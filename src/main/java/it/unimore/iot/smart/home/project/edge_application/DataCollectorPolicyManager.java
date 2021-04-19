@@ -9,12 +9,17 @@ import it.unimore.iot.smart.home.project.edge_application.model.LocationDescript
 import it.unimore.iot.smart.home.project.edge_application.model.PolicyDescriptor;
 import it.unimore.iot.smart.home.project.edge_application.persistence.DefaultIotInventoryDataManger;
 import it.unimore.iot.smart.home.project.edge_application.utils.DeviceType;
+import it.unimore.iot.smart.home.project.edge_application.utils.ResourceType;
 import org.eclipse.californium.core.*;
 import org.eclipse.californium.core.coap.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 
+/**
+ * @author Matteo Spaggiari, 262475@studenti.unimore.it - matteo.spaggiari78@gmail.com
+ * @project smart-home-project
+ */
 public class DataCollectorPolicyManager extends DefaultIotInventoryDataManger {
 
     private final static Logger logger = LoggerFactory.getLogger(DataCollectorPolicyManager.class);
@@ -34,8 +39,6 @@ public class DataCollectorPolicyManager extends DefaultIotInventoryDataManger {
 
     public void init() {
         logger.info("List Locations {}",this.locationMap.values());
-        this.targetObservableResourceMap = new HashMap<String, String>();
-        this.observingRelationMap = new HashMap<String, CoapObserveRelation>();
         logger.info("Instance of DataCollectorPolicyManager");
         toBeObservedDevicesControl();
     }
@@ -82,7 +85,7 @@ public class DataCollectorPolicyManager extends DefaultIotInventoryDataManger {
                                         device.getResourcePaths().forEach(path -> {
                                             logger.info("Send put request to device with URI: {}", getURLDevice(device, path));
                                             switch (path) {
-                                                case "light-controller/switch":
+                                                case ResourceType.LIGHT_SWITCH:
                                                     CoapPutRequestLightSwitch coapPutRequestLightSwitch = new CoapPutRequestLightSwitch(getURLDevice(device, path));
                                                     // If presence sensor is true turn on the light
                                                     coapPutRequestLightSwitch.setValue(true);
@@ -93,7 +96,7 @@ public class DataCollectorPolicyManager extends DefaultIotInventoryDataManger {
                                                         e.printStackTrace();
                                                     }
                                                     break;
-                                                case "light-controller/intensity":
+                                                case ResourceType.LIGHT_INTENSITY:
                                                     try {
                                                         CoapPutRequestLightIntensity coapPutRequestLightIntensity = new CoapPutRequestLightIntensity(getURLDevice(device, path), getLocation(locationId).get().getPolicyDescriptor().getLightIntensity());
                                                         coapPutRequestLightIntensity.sendRequest();
@@ -101,7 +104,7 @@ public class DataCollectorPolicyManager extends DefaultIotInventoryDataManger {
                                                         e.printStackTrace();
                                                     }
                                                     break;
-                                                case "light-controller/color":
+                                                case ResourceType.LIGHT_COLOR:
                                                     try {
                                                         CoapPutRequestLightColor coapPutRequestLightColor = new CoapPutRequestLightColor(getURLDevice(device, path), getLocation(locationId).get().getPolicyDescriptor().getLightColor());
                                                         coapPutRequestLightColor.sendRequest();
@@ -123,7 +126,7 @@ public class DataCollectorPolicyManager extends DefaultIotInventoryDataManger {
                                         device.getResourcePaths().forEach(path -> {
                                             logger.info("Path: {}", getURLDevice(device, path));
                                             switch (path) {
-                                                case "light-controller/switch":
+                                                case ResourceType.LIGHT_SWITCH:
                                                     CoapPutRequestLightSwitch coapPutRequestLightSwitch = new CoapPutRequestLightSwitch(getURLDevice(device, path));
                                                     // If presence sensor is false turn off the light
                                                     coapPutRequestLightSwitch.setValue(false);
@@ -163,8 +166,13 @@ public class DataCollectorPolicyManager extends DefaultIotInventoryDataManger {
         }
     }
 
-    private void deviceObservingDeleting(String targetCoapResourceURL) {
-        this.observingRelationMap.get(targetCoapResourceURL).proactiveCancel();
+    private void deviceObservingAndRelationsMapDeleting(String deviceId) {
+        // Stop Observing Device
+        this.observingRelationMap.get(this.targetObservableResourceMap.get(deviceId)).proactiveCancel();
+        // Delete the device from observingRelationMap
+        this.observingRelationMap.remove(this.targetObservableResourceMap.get(deviceId));
+        // Delete the device from targetObservableResourceMap
+        this.targetObservableResourceMap.remove(deviceId);
     }
 
     private String getURLDevice(DeviceDescriptor device, String resourcePath) {
@@ -175,13 +183,29 @@ public class DataCollectorPolicyManager extends DefaultIotInventoryDataManger {
     }
 
     @Override
+    public LocationDescriptor deleteLocation(String locationId) throws IoTInventoryDataManagerException {
+        // Remove the observation from all devices in the Location
+        getLocation(locationId).get().getDevices().forEach((deviceId, device) -> {
+            // Stop Observing Device and deleting relations map
+            deviceObservingAndRelationsMapDeleting(deviceId);
+        });
+
+        return super.deleteLocation(locationId);
+    }
+
+    @Override
+    public DeviceDescriptor createNewDevice(String locationId, DeviceDescriptor deviceDescriptor) throws IoTInventoryDataManagerException {
+        // If the Location where the device was created has the Policy Manager active, look at the device
+        if(getLocation(locationId).get().getPolicyDescriptor().isActive()) {
+            deviceObserving(locationId, deviceDescriptor);
+        }
+        return super.createNewDevice(locationId, deviceDescriptor);
+    }
+
+    @Override
     public DeviceDescriptor deleteDevice(String locationId, String deviceId) throws IoTInventoryDataManagerException {
-        // Stop Observing Device
-        deviceObservingDeleting(this.targetObservableResourceMap.get(deviceId));
-        // Delete the device from observingRelationMap
-        this.observingRelationMap.remove(this.targetObservableResourceMap.get(deviceId));
-        // Delete the device from targetObservableResourceMap
-        this.targetObservableResourceMap.remove(deviceId);
+        // Stop Observing Device and deleting relations map
+        deviceObservingAndRelationsMapDeleting(deviceId);
 
         return super.deleteDevice(locationId, deviceId);
     }
@@ -195,39 +219,12 @@ public class DataCollectorPolicyManager extends DefaultIotInventoryDataManger {
             });
         } else {
             getLocation(locationId).get().getDevices().forEach((deviceId, device) -> {
-                // Stop Observing Device
-                deviceObservingDeleting(this.targetObservableResourceMap.get(deviceId));
-                // Delete the device from observingRelationMap
-                this.observingRelationMap.remove(this.targetObservableResourceMap.get(deviceId));
-                // Delete the device from targetObservableResourceMap
-                this.targetObservableResourceMap.remove(deviceId);
+                // Stop Observing Device and deleting relations map
+                deviceObservingAndRelationsMapDeleting(deviceId);
             });
         }
 
         return super.updatePolicy(locationId, policyDescriptor);
     }
 
-    @Override
-    public DeviceDescriptor createNewDevice(String locationId, DeviceDescriptor deviceDescriptor) throws IoTInventoryDataManagerException {
-        // If the Location where the device was created has the Policy Manager active, look at the device
-        if(getLocation(locationId).get().getPolicyDescriptor().isActive()) {
-            deviceObserving(locationId, deviceDescriptor);
-        }
-        return super.createNewDevice(locationId, deviceDescriptor);
-    }
-
-    @Override
-    public LocationDescriptor deleteLocation(String locationId) throws IoTInventoryDataManagerException {
-        // Remove the observation from all devices in the Location
-        getLocation(locationId).get().getDevices().forEach((deviceId, device) -> {
-            // Stop Observing Device
-            deviceObservingDeleting(this.targetObservableResourceMap.get(deviceId));
-            // Delete the device from observingRelationMap
-            this.observingRelationMap.remove(this.targetObservableResourceMap.get(deviceId));
-            // Delete the device from targetObservableResourceMap
-            this.targetObservableResourceMap.remove(deviceId);
-        });
-
-        return super.deleteLocation(locationId);
-    }
 }

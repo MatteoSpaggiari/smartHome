@@ -1,14 +1,13 @@
 package it.unimore.iot.smart.home.project.edge_application.persistence;
 
+import it.unimore.iot.smart.home.project.edge_application.dto.LocationUpdateRequest;
 import it.unimore.iot.smart.home.project.edge_application.exception.IoTInventoryDataManagerConflict;
 import it.unimore.iot.smart.home.project.edge_application.exception.IoTInventoryDataManagerException;
 import it.unimore.iot.smart.home.project.edge_application.model.DeviceDescriptor;
 import it.unimore.iot.smart.home.project.edge_application.model.LocationDescriptor;
 import it.unimore.iot.smart.home.project.edge_application.model.PolicyDescriptor;
-
 import java.util.List;
 import java.util.Optional;
-
 
 /**
  * @author Matteo Spaggiari, 262475@studenti.unimore.it - matteo.spaggiari78@gmail.com
@@ -31,7 +30,7 @@ public interface IIotInventoryDataManager {
     public LocationDescriptor createNewLocation(LocationDescriptor locationDescriptor) throws IoTInventoryDataManagerException, IoTInventoryDataManagerConflict;
 
 
-    public LocationDescriptor updateLocation(LocationDescriptor locationDescriptor) throws IoTInventoryDataManagerException;
+    public LocationDescriptor updateLocation(LocationUpdateRequest locationUpdateRequest) throws IoTInventoryDataManagerException, IoTInventoryDataManagerConflict;
 
     public LocationDescriptor deleteLocation(String locationId) throws IoTInventoryDataManagerException;
 

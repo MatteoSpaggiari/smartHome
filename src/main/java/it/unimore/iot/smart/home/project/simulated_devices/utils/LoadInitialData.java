@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import it.unimore.iot.smart.home.project.simulated_devices.server.LightControllerServer;
 import it.unimore.iot.smart.home.project.simulated_devices.server.PresenceSensorServer;
 import org.eclipse.californium.core.CoapServer;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;

@@ -27,7 +27,10 @@ import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
-
+/**
+ * @author Matteo Spaggiari, 262475@studenti.unimore.it - matteo.spaggiari78@gmail.com
+ * @project smart-home-project
+ */
 @Path("/api/iot/inventory/location")
 @Api("IoT Location Inventory Endpoint")
 public class DeviceResource {
@@ -107,6 +110,39 @@ public class DeviceResource {
         }
     }
 
+    @DELETE
+    @Path("/{location_id}/device/{device_id}")
+    @Timed
+    @Produces(MediaType.APPLICATION_JSON)
+    @ApiOperation(value="Delete a Single Device")
+    public Response deleteDevice(@Context ContainerRequestContext req,
+                                 @PathParam("location_id") String locationId,
+                                 @PathParam("device_id") String deviceId) {
+
+        try {
+
+            logger.info("Deleting Device with id: {}", deviceId);
+
+            //Check the request
+            if(deviceId == null)
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(),"Invalid Device Id Provided !")).build();
+
+            //Check if the device is available or not
+            Optional<DeviceDescriptor> deviceDescriptor = this.conf.getDataCollectorPolicyManager().getDevice(locationId, deviceId);
+            if(!deviceDescriptor.isPresent())
+                return Response.status(Response.Status.NOT_FOUND).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.NOT_FOUND.getStatusCode(),"Device Not Found !")).build();
+
+            //Delete the device
+            this.conf.getDataCollectorPolicyManager().deleteDevice(locationId, deviceId);
+
+            return Response.noContent().build();
+
+        } catch (Exception e){
+            e.printStackTrace();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),"Internal Server Error !")).build();
+        }
+    }
+
     @POST
     @Path("/{location_id}/device/{device_type}")
     @Timed
@@ -130,7 +166,7 @@ public class DeviceResource {
                 PresenceSensorCreationRequest presenceSensorCreationRequest = objectMapper.treeToValue(deviceCreationRequest, PresenceSensorCreationRequest.class);
                 PresenceSensorDescriptor presenceSensorDescriptor = (PresenceSensorDescriptor) presenceSensorCreationRequest;
                 newDeviceDescriptor = this.conf.getDataCollectorPolicyManager().createNewDevice(locationId, presenceSensorDescriptor);
-            // If the device type is a Light Controller instantiate a Light Controller
+                // If the device type is a Light Controller instantiate a Light Controller
             } else if(deviceType.equals(DeviceType.LIGHT_CONTROLLER.getValue())) {
                 LightControllerCreationRequest lightControllerCreationRequest = objectMapper.treeToValue(deviceCreationRequest, LightControllerCreationRequest.class);
                 LightControllerDescriptor lightControllerDescriptor = (LightControllerDescriptor) lightControllerCreationRequest;
@@ -146,6 +182,7 @@ public class DeviceResource {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),"Internal Server Error !")).build();
         }
     }
+
 
     @PUT
     @Path("/{location_id}/device/{device_type}/{device_id}")
@@ -187,39 +224,6 @@ public class DeviceResource {
             } else {
                 return Response.status(Response.Status.BAD_REQUEST).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(),"Device type not recognized")).build();
             }
-
-            return Response.noContent().build();
-
-        } catch (Exception e){
-            e.printStackTrace();
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),"Internal Server Error !")).build();
-        }
-    }
-
-    @DELETE
-    @Path("/{location_id}/device/{device_id}")
-    @Timed
-    @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value="Delete a Single Device")
-    public Response deleteDevice(@Context ContainerRequestContext req,
-                                 @PathParam("location_id") String locationId,
-                                 @PathParam("device_id") String deviceId) {
-
-        try {
-
-            logger.info("Deleting Device with id: {}", deviceId);
-
-            //Check the request
-            if(deviceId == null)
-                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(),"Invalid Device Id Provided !")).build();
-
-            //Check if the device is available or not
-            Optional<DeviceDescriptor> deviceDescriptor = this.conf.getDataCollectorPolicyManager().getDevice(locationId, deviceId);
-            if(!deviceDescriptor.isPresent())
-                return Response.status(Response.Status.NOT_FOUND).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.NOT_FOUND.getStatusCode(),"Device Not Found !")).build();
-
-            //Delete the device
-            this.conf.getDataCollectorPolicyManager().deleteDevice(locationId, deviceId);
 
             return Response.noContent().build();
 

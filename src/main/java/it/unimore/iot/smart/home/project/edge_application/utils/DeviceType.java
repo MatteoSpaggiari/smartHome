@@ -1,5 +1,9 @@
 package it.unimore.iot.smart.home.project.edge_application.utils;
 
+/**
+ * @author Matteo Spaggiari, 262475@studenti.unimore.it - matteo.spaggiari78@gmail.com
+ * @project smart-home-project
+ */
 public enum DeviceType {
 
     PRESENCE_SENSOR("presence_sensor"),

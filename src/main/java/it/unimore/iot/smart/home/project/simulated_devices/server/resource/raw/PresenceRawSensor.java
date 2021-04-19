@@ -2,7 +2,6 @@ package it.unimore.iot.smart.home.project.simulated_devices.server.resource.raw;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.util.Random;
 import java.util.UUID;
 

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.unimore.iot.smart.home.project.edge_application.model.*;
 import it.unimore.iot.smart.home.project.edge_application.persistence.IIotInventoryDataManager;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;

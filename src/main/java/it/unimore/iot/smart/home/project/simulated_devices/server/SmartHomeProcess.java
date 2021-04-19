@@ -4,9 +4,12 @@ import it.unimore.iot.smart.home.project.simulated_devices.utils.LoadInitialData
 import org.eclipse.californium.core.CoapServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.util.List;
 
+/**
+ * @author Matteo Spaggiari, 262475@studenti.unimore.it - matteo.spaggiari78@gmail.com
+ * @project smart-home-project
+ */
 public class SmartHomeProcess {
 
     private final static Logger logger = LoggerFactory.getLogger(SmartHomeProcess.class);

@@ -10,7 +10,6 @@ import it.unimore.iot.smart.home.project.edge_application.model.PolicyDescriptor
 import it.unimore.iot.smart.home.project.edge_application.services.AppConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import javax.ws.rs.*;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
@@ -19,6 +18,10 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.util.Optional;
 
+/**
+ * @author Matteo Spaggiari, 262475@studenti.unimore.it - matteo.spaggiari78@gmail.com
+ * @project smart-home-project
+ */
 @Path("/api/iot/inventory/location")
 @Api("IoT Location Inventory Endpoint")
 public class PolicyResource {
@@ -41,7 +44,7 @@ public class PolicyResource {
     @Timed
     @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value="Get the policy in a location")
-    public Response getDevices(@Context ContainerRequestContext req,
+    public Response getPolicy(@Context ContainerRequestContext req,
                                @PathParam("location_id") String locationId) {
 
         try {
@@ -70,7 +73,7 @@ public class PolicyResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @ApiOperation(value="Update an existing device")
-    public Response updateDevice(@Context ContainerRequestContext req,
+    public Response updatePolicy(@Context ContainerRequestContext req,
                                  @Context UriInfo uriInfo,
                                  @PathParam("location_id") String locationId,
                                  PolicyUpdateRequest policyUpdateRequest) {

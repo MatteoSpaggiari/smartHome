@@ -1,12 +1,11 @@
 package it.unimore.iot.smart.home.project.edge_application.persistence;
 
-
+import it.unimore.iot.smart.home.project.edge_application.dto.LocationUpdateRequest;
 import it.unimore.iot.smart.home.project.edge_application.exception.IoTInventoryDataManagerConflict;
 import it.unimore.iot.smart.home.project.edge_application.exception.IoTInventoryDataManagerException;
 import it.unimore.iot.smart.home.project.edge_application.model.DeviceDescriptor;
 import it.unimore.iot.smart.home.project.edge_application.model.LocationDescriptor;
 import it.unimore.iot.smart.home.project.edge_application.model.PolicyDescriptor;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -69,8 +68,16 @@ public class DefaultIotInventoryDataManger implements IIotInventoryDataManager {
     }
 
     @Override
-    public LocationDescriptor updateLocation(LocationDescriptor locationDescriptor) throws IoTInventoryDataManagerException {
+    public LocationDescriptor updateLocation(LocationUpdateRequest locationUpdateRequest) throws IoTInventoryDataManagerException, IoTInventoryDataManagerConflict {
+
+        if(locationUpdateRequest.getRoom() != null && locationUpdateRequest.getFloor() != null && this.getLocationsByFloorAndRoom(locationUpdateRequest.getFloor(), locationUpdateRequest.getRoom()).size() > 0)
+            throw new IoTInventoryDataManagerConflict("Location with the same name and on the same floor already available!");
+
+        LocationDescriptor locationDescriptor = getLocation(locationUpdateRequest.getId()).get();
+        locationDescriptor.setRoom(locationUpdateRequest.getRoom());
+        locationDescriptor.setFloor(locationUpdateRequest.getFloor());
         this.locationMap.put(locationDescriptor.getId(), locationDescriptor);
+
         return locationDescriptor;
     }
 
@@ -107,9 +114,6 @@ public class DefaultIotInventoryDataManger implements IIotInventoryDataManager {
 
     @Override
     public DeviceDescriptor createNewDevice(String locationId, DeviceDescriptor deviceDescriptor) throws IoTInventoryDataManagerException {
-
-        //Set the locationId to a random UUID value
-        deviceDescriptor.setId(UUID.randomUUID().toString());
 
         this.locationMap.get(locationId).getDevices().put(deviceDescriptor.getId(), deviceDescriptor);
 

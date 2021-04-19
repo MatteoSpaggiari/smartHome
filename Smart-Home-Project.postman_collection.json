@@ -1,0 +1,564 @@
+{
+	"info": {
+		"_postman_id": "507b5512-1a2b-4889-b35a-51af2320f0cd",
+		"name": "Smart-Home-Project",
+		"description": "Collection for the Project of IoT Course",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get All Locations",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:7070/api/iot/inventory/location/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "7070",
+					"path": [
+						"api",
+						"iot",
+						"inventory",
+						"location",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get the Locations with Query Param Floor",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:7070/api/iot/inventory/location?floor=Ground floor",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "7070",
+					"path": [
+						"api",
+						"iot",
+						"inventory",
+						"location"
+					],
+					"query": [
+						{
+							"key": "floor",
+							"value": "Ground floor"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get the Locations with Query Param Floor and Room",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:7070/api/iot/inventory/location?floor=First floor&room=Bedroom",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "7070",
+					"path": [
+						"api",
+						"iot",
+						"inventory",
+						"location"
+					],
+					"query": [
+						{
+							"key": "floor",
+							"value": "First floor"
+						},
+						{
+							"key": "room",
+							"value": "Bedroom"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get the Locations with Query Param Room",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:7070/api/iot/inventory/location?room=Bedroom",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "7070",
+					"path": [
+						"api",
+						"iot",
+						"inventory",
+						"location"
+					],
+					"query": [
+						{
+							"key": "room",
+							"value": "Bedroom"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Location by ID",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:7070/api/iot/inventory/location/1",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "7070",
+					"path": [
+						"api",
+						"iot",
+						"inventory",
+						"location",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Location",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n      \"room\": \"Bedroom 2\",\r\n      \"floor\": \"First floor\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:7070/api/iot/inventory/location",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "7070",
+					"path": [
+						"api",
+						"iot",
+						"inventory",
+						"location"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Location by ID",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"room\": \"Single bedroom\",\r\n    \"floor\": \"Second floor\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:7070/api/iot/inventory/location/2",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "7070",
+					"path": [
+						"api",
+						"iot",
+						"inventory",
+						"location",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Location by ID",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:7070/api/iot/inventory/location/1",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "7070",
+					"path": [
+						"api",
+						"iot",
+						"inventory",
+						"location",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Devices in a specific Location",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:7070/api/iot/inventory/location/1/device",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "7070",
+					"path": [
+						"api",
+						"iot",
+						"inventory",
+						"location",
+						"1",
+						"device"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Devices with Query Param Type in a specific Location",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:7070/api/iot/inventory/location/1/device/?type=presence_sensor",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "7070",
+					"path": [
+						"api",
+						"iot",
+						"inventory",
+						"location",
+						"1",
+						"device",
+						""
+					],
+					"query": [
+						{
+							"key": "type",
+							"value": "presence_sensor"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Device by ID",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:7070/api/iot/inventory/location/1/device/2",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "7070",
+					"path": [
+						"api",
+						"iot",
+						"inventory",
+						"location",
+						"1",
+						"device",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Device Presence Sensor",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": \"6\",\r\n    \"name\": \"Presence Sensor 3\",\r\n    \"software_version\": 0.1,\r\n    \"manufacturer\": \"demo\",\r\n    \"host\": \"127.0.0.1\",\r\n    \"port\": \"5985\",\r\n    \"resource_paths\": [\r\n        \"presence-sensor\"\r\n    ],\r\n    \"type\": \"presence_sensor\",\r\n    \"presence\": false\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:7070/api/iot/inventory/location/ec63f89b-d50f-490e-b847-fb5b50d84a04/device/presence_sensor",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "7070",
+					"path": [
+						"api",
+						"iot",
+						"inventory",
+						"location",
+						"ec63f89b-d50f-490e-b847-fb5b50d84a04",
+						"device",
+						"presence_sensor"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Device Light Controller",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": 7,\r\n    \"name\": \"Light Controller 7\",\r\n    \"software_version\": 0.1,\r\n    \"manufacturer\": \"demo\",\r\n    \"host\": \"127.0.0.1\",\r\n    \"port\": \"5986\",\r\n    \"resource_paths\": [\r\n        \"light-controller/switch\",\r\n        \"light-controller/intensity\",\r\n        \"light-controller/color\"\r\n    ],\r\n    \"type\": \"light_controller\",\r\n    \"active\": true,\r\n    \"intensity\": 180.0,\r\n    \"color\":\r\n    {\r\n        \"red\": 200,\r\n        \"green\": 100,\r\n        \"blue\": 90\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:7070/api/iot/inventory/location/0440437c-5045-427b-827d-1c57f0c02af0/device/light_controller",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "7070",
+					"path": [
+						"api",
+						"iot",
+						"inventory",
+						"location",
+						"0440437c-5045-427b-827d-1c57f0c02af0",
+						"device",
+						"light_controller"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Device",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": \"2\",\r\n    \"name\": \"Light Controller\",\r\n    \"software_version\": 0.1,\r\n    \"manufacturer\": \"demo\",\r\n    \"host\": \"127.0.0.1\",\r\n    \"port\": \"5783\",\r\n    \"resource_paths\": [\r\n        \"light-controller/switch\",\r\n        \"light-controller/intensity\",\r\n        \"light-controller/color\"\r\n    ],\r\n    \"type\": \"light_controller\",\r\n    \"active\": true,\r\n    \"intensity\": 100.0,\r\n    \"color\":\r\n    {\r\n        \"red\": 230,\r\n        \"green\": 200,\r\n        \"blue\": 200\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:7070/api/iot/inventory/location/1/device/light_controller/2",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "7070",
+					"path": [
+						"api",
+						"iot",
+						"inventory",
+						"location",
+						"1",
+						"device",
+						"light_controller",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Device",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:7070/api/iot/inventory/location/2/device/4",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "7070",
+					"path": [
+						"api",
+						"iot",
+						"inventory",
+						"location",
+						"2",
+						"device",
+						"4"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Policy in a specific Location",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:7070/api/iot/inventory/location/1/policy",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "7070",
+					"path": [
+						"api",
+						"iot",
+						"inventory",
+						"location",
+						"1",
+						"policy"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Policy in a specific Location",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"active\": true,\r\n    \"light_intensity\": 50,\r\n    \"light_color\":\r\n    {\r\n        \"red\": 255,\r\n        \"green\": 0,\r\n        \"blue\": 255\r\n    },\r\n    \"sweet_night\": false\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:7070/api/iot/inventory/location/0440437c-5045-427b-827d-1c57f0c02af0/policy",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "7070",
+					"path": [
+						"api",
+						"iot",
+						"inventory",
+						"location",
+						"0440437c-5045-427b-827d-1c57f0c02af0",
+						"policy"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

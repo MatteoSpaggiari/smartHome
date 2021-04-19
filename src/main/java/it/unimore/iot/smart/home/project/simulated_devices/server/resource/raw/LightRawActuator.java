@@ -2,9 +2,12 @@ package it.unimore.iot.smart.home.project.simulated_devices.server.resource.raw;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.util.UUID;
 
+/**
+ * @author Matteo Spaggiari, 262475@studenti.unimore.it - matteo.spaggiari78@gmail.com
+ * @project smart-home-project
+ */
 public class LightRawActuator extends SmartObjectResource<Boolean> {
 
     private static Logger logger = LoggerFactory.getLogger(LightRawActuator.class);

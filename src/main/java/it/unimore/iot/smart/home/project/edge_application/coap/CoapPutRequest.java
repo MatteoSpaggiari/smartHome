@@ -6,21 +6,12 @@ import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.Utils;
 import org.eclipse.californium.core.coap.CoAP.Code;
 import org.eclipse.californium.core.coap.Request;
-import org.eclipse.californium.elements.exception.ConnectorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.util.concurrent.Semaphore;
-
 /**
- * A simple CoAP Synchronous Client implemented using Californium Java Library
- * The simple client send a PUT request to a target CoAP Resource with some custom request parameters
- * and payload
- *
- * @author Marco Picone, Ph.D. - picone.m@gmail.com
- * @project coap-demo-smartobject
- * @created 20/10/2020 - 09:19
+ * @author Matteo Spaggiari, 262475@studenti.unimore.it - matteo.spaggiari78@gmail.com
+ * @project smart-home-project
  */
 public abstract class CoapPutRequest<T> {
 
@@ -71,14 +62,13 @@ public abstract class CoapPutRequest<T> {
 		logger.info("PUT Request Random Payload: {}", myPayload);
 		request.setPayload(myPayload);
 
-
-		logger.info("Request Pretty Print: \n{}", Utils.prettyPrint(request));
+		//logger.info("Request Pretty Print: \n{}", Utils.prettyPrint(request));
 
 		CoapHandler handler = new CoapHandler() {
 
 			public void onLoad(CoapResponse coapResp) {
 
-				logger.info("PrettyPrint Response: \n{}", Utils.prettyPrint(coapResp));
+				//logger.info("PrettyPrint Response: \n{}", Utils.prettyPrint(coapResp));
 			}
 
 			public void onError() {

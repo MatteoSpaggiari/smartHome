@@ -50,7 +50,6 @@
       "policy":
       {
         "active": false,
-        "light_switch": false,
         "light_intensity": 80,
         "light_color":
         {
@@ -128,7 +127,6 @@
       "policy":
       {
         "active": true,
-        "light_switch": false,
         "light_intensity": 100,
         "light_color":
         {

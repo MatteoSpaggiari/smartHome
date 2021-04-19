@@ -1,18 +1,18 @@
 package it.unimore.iot.smart.home.project.edge_application.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.HashMap;
 import java.util.UUID;
 
+/**
+ * @author Matteo Spaggiari, 262475@studenti.unimore.it - matteo.spaggiari78@gmail.com
+ * @project smart-home-project
+ */
 public class PolicyDescriptor {
 
     private String id;
 
     private boolean active;
-
-    @JsonProperty("light_switch")
-    private boolean lightIsOn;
 
     @JsonProperty("light_intensity")
     private Double lightIntensity;
@@ -27,7 +27,6 @@ public class PolicyDescriptor {
     {
         this.id = UUID.randomUUID().toString();
         this.active = false;
-        this.lightIsOn = false;
         this.lightIntensity = 80.0;
         this.lightColor = new HashMap<String, Integer>();
         this.lightColor.put("Red", 255);
@@ -42,7 +41,6 @@ public class PolicyDescriptor {
     public PolicyDescriptor(String id, boolean active, boolean lightIsOn, Double lightIntensity, HashMap<String, Integer> lightColor, boolean sweetNight) {
         this.id = id;
         this.active = active;
-        this.lightIsOn = lightIsOn;
         this.lightIntensity = lightIntensity;
         this.lightColor = lightColor;
         this.sweetNight = sweetNight;
@@ -62,14 +60,6 @@ public class PolicyDescriptor {
 
     public void setActive(boolean active) {
         this.active = active;
-    }
-
-    public boolean isLightIsOn() {
-        return lightIsOn;
-    }
-
-    public void setLightIsOn(boolean lightIsOn) {
-        this.lightIsOn = lightIsOn;
     }
 
     public Double getLightIntensity() {
@@ -101,7 +91,6 @@ public class PolicyDescriptor {
         final StringBuffer sb = new StringBuffer("PolicyDescriptor{");
         sb.append("id='").append(id).append('\'');
         sb.append(", active=").append(active);
-        sb.append(", lightIsOn=").append(lightIsOn);
         sb.append(", lightIntensity=").append(lightIntensity);
         sb.append(", lightColor=").append(lightColor);
         sb.append(", sweetNight=").append(sweetNight);

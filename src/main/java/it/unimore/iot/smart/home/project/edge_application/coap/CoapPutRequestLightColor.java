@@ -2,10 +2,13 @@ package it.unimore.iot.smart.home.project.edge_application.coap;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.io.IOException;
 import java.util.HashMap;
 
+/**
+ * @author Matteo Spaggiari, 262475@studenti.unimore.it - matteo.spaggiari78@gmail.com
+ * @project smart-home-project
+ */
 public class CoapPutRequestLightColor extends CoapPutRequest<HashMap<String, Integer>> {
 
     public CoapPutRequestLightColor(String coapEndpoint, HashMap<String, Integer> value) {

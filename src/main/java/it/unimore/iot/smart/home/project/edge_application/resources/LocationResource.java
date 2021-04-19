@@ -21,6 +21,10 @@ import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * @author Matteo Spaggiari, 262475@studenti.unimore.it - matteo.spaggiari78@gmail.com
+ * @project smart-home-project
+ */
 @Path("/api/iot/inventory/location")
 @Api("IoT Location Inventory Endpoint")
 public class LocationResource {
@@ -73,35 +77,6 @@ public class LocationResource {
         }
     }
 
-    @GET
-    @Path("/{location_id}")
-    @Timed
-    @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value="Get a Single Location")
-    public Response getLocation(@Context ContainerRequestContext req,
-                                @PathParam("location_id") String locationId) {
-
-        try {
-
-            logger.info("Loading Location Info for id: {}", locationId);
-
-            //Check the request
-            if(locationId == null)
-                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(),"Invalid Location Id Provided !")).build();
-
-            Optional<LocationDescriptor> locationDescriptor = this.conf.getDataCollectorPolicyManager().getLocation(locationId);
-
-            if(!locationDescriptor.isPresent())
-                return Response.status(Response.Status.NOT_FOUND).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.NOT_FOUND.getStatusCode(),"Location Not Found !")).build();
-
-            return Response.ok(locationDescriptor.get()).build();
-
-        } catch (Exception e){
-            e.printStackTrace();
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),"Internal Server Error !")).build();
-        }
-    }
-
     @POST
     @Path("/")
     @Timed
@@ -136,6 +111,35 @@ public class LocationResource {
         }
     }
 
+    @GET
+    @Path("/{location_id}")
+    @Timed
+    @Produces(MediaType.APPLICATION_JSON)
+    @ApiOperation(value="Get a Single Location")
+    public Response getLocation(@Context ContainerRequestContext req,
+                                @PathParam("location_id") String locationId) {
+
+        try {
+
+            logger.info("Loading Location Info for id: {}", locationId);
+
+            //Check the request
+            if(locationId == null)
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(),"Invalid Location Id Provided !")).build();
+
+            Optional<LocationDescriptor> locationDescriptor = this.conf.getDataCollectorPolicyManager().getLocation(locationId);
+
+            if(!locationDescriptor.isPresent())
+                return Response.status(Response.Status.NOT_FOUND).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.NOT_FOUND.getStatusCode(),"Location Not Found !")).build();
+
+            return Response.ok(locationDescriptor.get()).build();
+
+        } catch (Exception e){
+            e.printStackTrace();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),"Internal Server Error !")).build();
+        }
+    }
+
     @PUT
     @Path("/{location_id}")
     @Timed
@@ -159,8 +163,7 @@ public class LocationResource {
             if(!this.conf.getDataCollectorPolicyManager().getLocation(locationId).isPresent())
                 return Response.status(Response.Status.NOT_FOUND).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.NOT_FOUND.getStatusCode(),"Location not found !")).build();
 
-            LocationDescriptor locationDescriptor = (LocationDescriptor) locationUpdateRequest;
-            this.conf.getDataCollectorPolicyManager().updateLocation(locationDescriptor);
+            this.conf.getDataCollectorPolicyManager().updateLocation(locationUpdateRequest);
 
             return Response.noContent().build();
 
@@ -175,7 +178,7 @@ public class LocationResource {
     @Timed
     @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value="Delete a Single Location")
-    public Response deleteDevice(@Context ContainerRequestContext req,
+    public Response deleteLocation(@Context ContainerRequestContext req,
                                  @PathParam("location_id") String locationId) {
 
         try {

@@ -11,11 +11,14 @@ import it.unimore.iot.smart.home.project.edge_application.resources.LocationReso
 import it.unimore.iot.smart.home.project.edge_application.resources.PolicyResource;
 import it.unimore.iot.smart.home.project.edge_application.utils.LoadInitialData;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
-
 import javax.servlet.DispatcherType;
 import javax.servlet.FilterRegistration;
 import java.util.EnumSet;
 
+/**
+ * @author Matteo Spaggiari, 262475@studenti.unimore.it - matteo.spaggiari78@gmail.com
+ * @project smart-home-project
+ */
 public class AppService extends Application<AppConfig> {
 
     DataCollectorPolicyManager dataCollectorPolicyManager;
