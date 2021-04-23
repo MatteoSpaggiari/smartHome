@@ -6,6 +6,7 @@ import io.dropwizard.jersey.errors.ErrorMessage;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import it.unimore.iot.smart.home.project.edge_application.dto.*;
+import it.unimore.iot.smart.home.project.edge_application.exception.IoTInventoryDataManagerException;
 import it.unimore.iot.smart.home.project.edge_application.model.PolicyDescriptor;
 import it.unimore.iot.smart.home.project.edge_application.services.AppConfig;
 import org.slf4j.Logger;
@@ -22,8 +23,11 @@ import java.util.Optional;
  * @author Matteo Spaggiari, 262475@studenti.unimore.it - matteo.spaggiari78@gmail.com
  * @project smart-home-project
  */
-@Path("/api/iot/inventory/location")
-@Api("IoT Location Inventory Endpoint")
+@Path("/api/iot/inventory/location/{location_id}/policy")
+@Api("IoT Policy in Location Inventory Endpoint")
+@Timed
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
 public class PolicyResource {
 
     protected final static Logger logger = LoggerFactory.getLogger(PolicyResource.class);
@@ -40,9 +44,7 @@ public class PolicyResource {
     }
 
     @GET
-    @Path("/{location_id}/policy")
-    @Timed
-    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/")
     @ApiOperation(value="Get the policy in a location")
     public Response getPolicy(@Context ContainerRequestContext req,
                                @PathParam("location_id") String locationId) {
@@ -51,8 +53,14 @@ public class PolicyResource {
 
             logger.info("Loading the policy in a Location with id: {}", locationId);
 
-            if(locationId == null)
-                return Response.status(Response.Status.NOT_FOUND).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.NOT_FOUND.getStatusCode(),"Location does not exist !")).build();
+            //Check PathParam in the request
+            if(locationId == null || !this.conf.getDataCollectorPolicyManager().getLocation(locationId).isPresent()) {
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.APPLICATION_JSON_TYPE).entity(
+                        new ErrorMessage(
+                                Response.Status.BAD_REQUEST.getStatusCode(),
+                                controlPathParamLocationId(locationId)
+                        )).build();
+            }
 
             Optional<PolicyDescriptor> policyDescriptor = this.conf.getDataCollectorPolicyManager().getPolicy(locationId);
 
@@ -68,11 +76,8 @@ public class PolicyResource {
     }
 
     @PUT
-    @Path("/{location_id}/policy")
-    @Timed
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    @ApiOperation(value="Update an existing device")
+    @Path("/")
+    @ApiOperation(value="Update an existing policy in a Location")
     public Response updatePolicy(@Context ContainerRequestContext req,
                                  @Context UriInfo uriInfo,
                                  @PathParam("location_id") String locationId,
@@ -81,6 +86,15 @@ public class PolicyResource {
         try {
 
             logger.info("Incoming Policy ({}) Update Request: {}", locationId, policyUpdateRequest);
+
+            //Check PathParam in the request
+            if(locationId == null || !this.conf.getDataCollectorPolicyManager().getLocation(locationId).isPresent()) {
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.APPLICATION_JSON_TYPE).entity(
+                        new ErrorMessage(
+                                Response.Status.BAD_REQUEST.getStatusCode(),
+                                controlPathParamLocationId(locationId)
+                        )).build();
+            }
 
             //Check if the request is valid
             if(policyUpdateRequest == null)
@@ -100,6 +114,23 @@ public class PolicyResource {
             e.printStackTrace();
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),"Internal Server Error !")).build();
         }
+    }
+
+    private String controlPathParamLocationId(String locationId) {
+        // Check if the location_id is null
+        if(locationId == null) {
+            return "Invalid Location Id Provided !";
+            // Check if the location is available or not
+        } else {
+            try {
+                if(!this.conf.getDataCollectorPolicyManager().getLocation(locationId).isPresent()) {
+                    return "Location Not Found !";
+                }
+            } catch (IoTInventoryDataManagerException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
     }
 
 }

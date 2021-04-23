@@ -10,6 +10,7 @@ import it.unimore.iot.smart.home.project.edge_application.dto.LightControllerCre
 import it.unimore.iot.smart.home.project.edge_application.dto.LightControllerUpdateRequest;
 import it.unimore.iot.smart.home.project.edge_application.dto.PresenceSensorCreationRequest;
 import it.unimore.iot.smart.home.project.edge_application.dto.PresenceSensorUpdateRequest;
+import it.unimore.iot.smart.home.project.edge_application.exception.IoTInventoryDataManagerException;
 import it.unimore.iot.smart.home.project.edge_application.model.DeviceDescriptor;
 import it.unimore.iot.smart.home.project.edge_application.model.LightControllerDescriptor;
 import it.unimore.iot.smart.home.project.edge_application.model.PresenceSensorDescriptor;
@@ -31,8 +32,11 @@ import java.util.Optional;
  * @author Matteo Spaggiari, 262475@studenti.unimore.it - matteo.spaggiari78@gmail.com
  * @project smart-home-project
  */
-@Path("/api/iot/inventory/location")
-@Api("IoT Location Inventory Endpoint")
+@Path("/api/iot/inventory/location/{location_id}/device")
+@Api("IoT Device in Location Inventory Endpoint")
+@Timed
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
 public class DeviceResource {
 
     protected final static Logger logger = LoggerFactory.getLogger(DeviceResource.class);
@@ -49,10 +53,8 @@ public class DeviceResource {
     }
 
     @GET
-    @Path("/{location_id}/device")
-    @Timed
-    @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value="Get all available IoT devices or filter according to their in a location")
+    @Path("/")
+    @ApiOperation(value="Get all available IoT devices or filter according to their location")
     public Response getDevices(@Context ContainerRequestContext req,
                                @PathParam("location_id") String locationId,
                                @QueryParam("type") String deviceType) {
@@ -60,6 +62,15 @@ public class DeviceResource {
         try {
 
             logger.info("Loading all stored IoT Inventory Devices filtered by Type: {}", deviceType);
+
+            //Check PathParam in the request
+            if(locationId == null || !this.conf.getDataCollectorPolicyManager().getLocation(locationId).isPresent()) {
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.APPLICATION_JSON_TYPE).entity(
+                    new ErrorMessage(
+                        Response.Status.BAD_REQUEST.getStatusCode(),
+                        controlPathParamLocationId(locationId)
+                    )).build();
+            }
 
             List<DeviceDescriptor> deviceList = null;
 
@@ -81,10 +92,8 @@ public class DeviceResource {
     }
 
     @GET
-    @Path("/{location_id}/device/{device_id}")
-    @Timed
-    @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value="Get a Single Location")
+    @Path("/{device_id}")
+    @ApiOperation(value="Get a Single Device")
     public Response getDevice(@Context ContainerRequestContext req,
                               @PathParam("location_id") String locationId,
                               @PathParam("device_id") String deviceId) {
@@ -92,6 +101,15 @@ public class DeviceResource {
         try {
 
             logger.info("Loading Device Info for id: {}", deviceId);
+
+            //Check PathParam in the request
+            if(locationId == null || !this.conf.getDataCollectorPolicyManager().getLocation(locationId).isPresent()) {
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.APPLICATION_JSON_TYPE).entity(
+                    new ErrorMessage(
+                        Response.Status.BAD_REQUEST.getStatusCode(),
+                        controlPathParamLocationId(locationId)
+                    )).build();
+            }
 
             //Check the request
             if(deviceId == null)
@@ -111,9 +129,7 @@ public class DeviceResource {
     }
 
     @DELETE
-    @Path("/{location_id}/device/{device_id}")
-    @Timed
-    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/{device_id}")
     @ApiOperation(value="Delete a Single Device")
     public Response deleteDevice(@Context ContainerRequestContext req,
                                  @PathParam("location_id") String locationId,
@@ -122,6 +138,15 @@ public class DeviceResource {
         try {
 
             logger.info("Deleting Device with id: {}", deviceId);
+
+            //Check PathParam in the request
+            if(locationId == null || !this.conf.getDataCollectorPolicyManager().getLocation(locationId).isPresent()) {
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.APPLICATION_JSON_TYPE).entity(
+                    new ErrorMessage(
+                        Response.Status.BAD_REQUEST.getStatusCode(),
+                        controlPathParamLocationId(locationId)
+                    )).build();
+            }
 
             //Check the request
             if(deviceId == null)
@@ -144,10 +169,7 @@ public class DeviceResource {
     }
 
     @POST
-    @Path("/{location_id}/device/{device_type}")
-    @Timed
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("/{device_type}")
     @ApiOperation(value="Create a new Device")
     public Response createDevice(@Context ContainerRequestContext req,
                                  @Context UriInfo uriInfo,
@@ -159,14 +181,25 @@ public class DeviceResource {
 
             logger.info("Incoming Device Creation Request: {}", deviceCreationRequest);
 
+            //Check PathParam in the request
+            if (locationId == null || !this.conf.getDataCollectorPolicyManager().getLocation(locationId).isPresent()) {
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.APPLICATION_JSON_TYPE).entity(
+                        new ErrorMessage(
+                                Response.Status.BAD_REQUEST.getStatusCode(),
+                                controlPathParamLocationId(locationId)
+                        )).build();
+            }
+
             DeviceDescriptor newDeviceDescriptor = new DeviceDescriptor();
 
             // If the device type is a Presence Sensor instantiate a Presence Sensor
-            if(deviceType.equals(DeviceType.PRESENCE_SENSOR.getValue())) {
+            if(deviceType == null) {
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(),"Invalid Device Type !")).build();
+            } else if(deviceType.equals(DeviceType.PRESENCE_SENSOR.getValue())) {
                 PresenceSensorCreationRequest presenceSensorCreationRequest = objectMapper.treeToValue(deviceCreationRequest, PresenceSensorCreationRequest.class);
                 PresenceSensorDescriptor presenceSensorDescriptor = (PresenceSensorDescriptor) presenceSensorCreationRequest;
                 newDeviceDescriptor = this.conf.getDataCollectorPolicyManager().createNewDevice(locationId, presenceSensorDescriptor);
-                // If the device type is a Light Controller instantiate a Light Controller
+            // If the device type is a Light Controller instantiate a Light Controller
             } else if(deviceType.equals(DeviceType.LIGHT_CONTROLLER.getValue())) {
                 LightControllerCreationRequest lightControllerCreationRequest = objectMapper.treeToValue(deviceCreationRequest, LightControllerCreationRequest.class);
                 LightControllerDescriptor lightControllerDescriptor = (LightControllerDescriptor) lightControllerCreationRequest;
@@ -185,11 +218,8 @@ public class DeviceResource {
 
 
     @PUT
-    @Path("/{location_id}/device/{device_type}/{device_id}")
-    @Timed
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    @ApiOperation(value="Update an existing device")
+    @Path("/{device_type}/{device_id}")
+    @ApiOperation(value="Update an existing Device")
     public Response updateDevice(@Context ContainerRequestContext req,
                                  @Context UriInfo uriInfo,
                                  @PathParam("location_id") String locationId,
@@ -201,11 +231,27 @@ public class DeviceResource {
 
             logger.info("Incoming Device ({}) Update Request: {}", deviceId, deviceUpdateRequest);
 
-            //Check if the request is valid
+            //Check PathParam in the request
+            if(locationId == null || !this.conf.getDataCollectorPolicyManager().getLocation(locationId).isPresent()) {
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.APPLICATION_JSON_TYPE).entity(
+                    new ErrorMessage(
+                        Response.Status.BAD_REQUEST.getStatusCode(),
+                        controlPathParamLocationId(locationId)
+                    )).build();
+            }
+
+            if(deviceType == null)
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(), "Invalid Device Type !")).build();
+
+            // Check the request
+            if(deviceId == null)
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(),"Invalid Device Id Provided !")).build();
+
+            // Check if the request is valid
             if(deviceUpdateRequest == null)
                 return Response.status(Response.Status.BAD_REQUEST).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(),"Invalid request ! Check Device Id")).build();
 
-            //Check if the device is available and correctly registered otherwise a 404 response will be sent to the client
+            // Check if the device is available and correctly registered otherwise a 404 response will be sent to the client
             if(!this.conf.getDataCollectorPolicyManager().getDevice(locationId, deviceId).isPresent())
                 return Response.status(Response.Status.NOT_FOUND).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.NOT_FOUND.getStatusCode(),"Device not found !")).build();
 
@@ -216,7 +262,7 @@ public class DeviceResource {
                 PresenceSensorUpdateRequest presenceSensorUpdateRequest = objectMapper.treeToValue(deviceUpdateRequest, PresenceSensorUpdateRequest.class);
                 PresenceSensorDescriptor presenceSensorDescriptor = (PresenceSensorDescriptor) presenceSensorUpdateRequest;
                 deviceDescriptor = this.conf.getDataCollectorPolicyManager().updateDevice(locationId, presenceSensorDescriptor);
-                // If the device type is a Light Controller instantiate a Light Controller
+            // If the device type is a Light Controller instantiate a Light Controller
             } else if(deviceType.equals(DeviceType.LIGHT_CONTROLLER.getValue())) {
                 LightControllerUpdateRequest lightControllerUpdateRequest = objectMapper.treeToValue(deviceUpdateRequest, LightControllerUpdateRequest.class);
                 LightControllerDescriptor lightControllerDescriptor = (LightControllerDescriptor) lightControllerUpdateRequest;
@@ -231,6 +277,23 @@ public class DeviceResource {
             e.printStackTrace();
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),"Internal Server Error !")).build();
         }
+    }
+
+    private String controlPathParamLocationId(String locationId) {
+        // Check if the location_id is null
+        if(locationId == null) {
+            return "Invalid Location Id Provided !";
+        // Check if the location is available or not
+        } else {
+            try {
+                if(!this.conf.getDataCollectorPolicyManager().getLocation(locationId).isPresent()) {
+                    return "Location Not Found !";
+                }
+            } catch (IoTInventoryDataManagerException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
     }
 
 }

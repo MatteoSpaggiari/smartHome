@@ -23,6 +23,10 @@ public class PolicyDescriptor {
     @JsonProperty("sweet_night")
     private boolean sweetNight;
 
+    private Double lightIntensitySweetNight;
+
+    private HashMap<String, Integer> lightColorSweetNight;
+
     // Default Policy
     {
         this.id = UUID.randomUUID().toString();
@@ -33,17 +37,33 @@ public class PolicyDescriptor {
         this.lightColor.put("Green", 255);
         this.lightColor.put("Blue", 255);
         this.sweetNight = false;
+        this.lightIntensitySweetNight = 30.0;
+        this.lightColorSweetNight = new HashMap<String, Integer>();
+        // Light blue
+        this.lightColorSweetNight.put("Red", 199);
+        this.lightColorSweetNight.put("Green", 240);
+        this.lightColorSweetNight.put("Blue", 255);
     }
 
     public PolicyDescriptor() {
     }
 
-    public PolicyDescriptor(String id, boolean active, boolean lightIsOn, Double lightIntensity, HashMap<String, Integer> lightColor, boolean sweetNight) {
+    public PolicyDescriptor(String id, boolean active, Double lightIntensity, HashMap<String, Integer> lightColor, boolean sweetNight) {
         this.id = id;
         this.active = active;
         this.lightIntensity = lightIntensity;
         this.lightColor = lightColor;
         this.sweetNight = sweetNight;
+    }
+
+    public PolicyDescriptor(String id, boolean active, Double lightIntensity, HashMap<String, Integer> lightColor, boolean sweetNight, Double lightIntensitySweetNight, HashMap<String, Integer> lightColorSweetNight) {
+        this.id = id;
+        this.active = active;
+        this.lightIntensity = lightIntensity;
+        this.lightColor = lightColor;
+        this.sweetNight = sweetNight;
+        this.lightIntensitySweetNight = lightIntensitySweetNight;
+        this.lightColorSweetNight = lightColorSweetNight;
     }
 
     public String getId() {
@@ -86,6 +106,22 @@ public class PolicyDescriptor {
         this.sweetNight = sweetNight;
     }
 
+    public Double getLightIntensitySweetNight() {
+        return lightIntensitySweetNight;
+    }
+
+    public void setLightIntensitySweetNight(Double lightIntensitySweetNight) {
+        this.lightIntensitySweetNight = lightIntensitySweetNight;
+    }
+
+    public HashMap<String, Integer> getLightColorSweetNight() {
+        return lightColorSweetNight;
+    }
+
+    public void setLightColorSweetNight(HashMap<String, Integer> lightColorSweetNight) {
+        this.lightColorSweetNight = lightColorSweetNight;
+    }
+
     @Override
     public String toString() {
         final StringBuffer sb = new StringBuffer("PolicyDescriptor{");
@@ -94,6 +130,8 @@ public class PolicyDescriptor {
         sb.append(", lightIntensity=").append(lightIntensity);
         sb.append(", lightColor=").append(lightColor);
         sb.append(", sweetNight=").append(sweetNight);
+        sb.append(", lightIntensitySweetNight=").append(lightIntensitySweetNight);
+        sb.append(", lightColorSweetNight=").append(lightColorSweetNight);
         sb.append('}');
         return sb.toString();
     }

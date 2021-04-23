@@ -27,6 +27,9 @@ import java.util.Optional;
  */
 @Path("/api/iot/inventory/location")
 @Api("IoT Location Inventory Endpoint")
+@Timed
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
 public class LocationResource {
 
     protected final static Logger logger = LoggerFactory.getLogger(LocationResource.class);
@@ -41,9 +44,7 @@ public class LocationResource {
 
     @GET
     @Path("/")
-    @Timed
-    @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value="Get all available locations or filter according to floor OR room")
+    @ApiOperation(value="Get all available Locations or filter according to floor OR room")
     public Response getLocations(@Context ContainerRequestContext req,
                                  @QueryParam("floor") String floor,
                                  @QueryParam("room") String room) {
@@ -79,9 +80,6 @@ public class LocationResource {
 
     @POST
     @Path("/")
-    @Timed
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
     @ApiOperation(value="Create a new Location")
     public Response createLocation(@Context ContainerRequestContext req,
                                    @Context UriInfo uriInfo,
@@ -113,8 +111,6 @@ public class LocationResource {
 
     @GET
     @Path("/{location_id}")
-    @Timed
-    @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value="Get a Single Location")
     public Response getLocation(@Context ContainerRequestContext req,
                                 @PathParam("location_id") String locationId) {
@@ -142,9 +138,6 @@ public class LocationResource {
 
     @PUT
     @Path("/{location_id}")
-    @Timed
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
     @ApiOperation(value="Update an existing Location")
     public Response updateLocation(@Context ContainerRequestContext req,
                                    @Context UriInfo uriInfo,
@@ -175,8 +168,6 @@ public class LocationResource {
 
     @DELETE
     @Path("/{location_id}")
-    @Timed
-    @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value="Delete a Single Location")
     public Response deleteLocation(@Context ContainerRequestContext req,
                                  @PathParam("location_id") String locationId) {

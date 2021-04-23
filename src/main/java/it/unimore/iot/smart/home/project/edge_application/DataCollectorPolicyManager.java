@@ -14,6 +14,8 @@ import org.eclipse.californium.core.*;
 import org.eclipse.californium.core.coap.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.time.LocalTime;
 import java.util.HashMap;
 
 /**
@@ -75,76 +77,29 @@ public class DataCollectorPolicyManager extends DefaultIotInventoryDataManger {
 
                     public void onLoad(CoapResponse response) {
 
+                        // If Device is a PresenceSensor
                         if (deviceDescriptor.getType().equals(DeviceType.PRESENCE_SENSOR.getValue())) {
                             String content = response.getResponseText();
                             //logger.info("Notification Response Pretty Print: \n{}", Utils.prettyPrint(response));
                             logger.info("NOTIFICATION: the device {} with id {} has value {}", deviceDescriptor.getName(), deviceDescriptor.getId(), content);
+                            // If PresenceSensor detects someone
                             if (content.equals("true")) {
+
                                 try {
-                                    getDevicesListByType(locationId, DeviceType.LIGHT_CONTROLLER.getValue()).forEach(device -> {
-                                        device.getResourcePaths().forEach(path -> {
-                                            logger.info("Send put request to device with URI: {}", getURLDevice(device, path));
-                                            switch (path) {
-                                                case ResourceType.LIGHT_SWITCH:
-                                                    CoapPutRequestLightSwitch coapPutRequestLightSwitch = new CoapPutRequestLightSwitch(getURLDevice(device, path));
-                                                    // If presence sensor is true turn on the light
-                                                    coapPutRequestLightSwitch.setValue(true);
-                                                    coapPutRequestLightSwitch.sendRequest();
-                                                    try {
-                                                        logger.info("Turn on the light {} in the room {} with id {}",device.getName() ,getLocation(locationId).get().getRoom(), getLocation(locationId).get().getId());
-                                                    } catch (IoTInventoryDataManagerException e) {
-                                                        e.printStackTrace();
-                                                    }
-                                                    break;
-                                                case ResourceType.LIGHT_INTENSITY:
-                                                    try {
-                                                        CoapPutRequestLightIntensity coapPutRequestLightIntensity = new CoapPutRequestLightIntensity(getURLDevice(device, path), getLocation(locationId).get().getPolicyDescriptor().getLightIntensity());
-                                                        coapPutRequestLightIntensity.sendRequest();
-                                                    } catch (IoTInventoryDataManagerException e) {
-                                                        e.printStackTrace();
-                                                    }
-                                                    break;
-                                                case ResourceType.LIGHT_COLOR:
-                                                    try {
-                                                        CoapPutRequestLightColor coapPutRequestLightColor = new CoapPutRequestLightColor(getURLDevice(device, path), getLocation(locationId).get().getPolicyDescriptor().getLightColor());
-                                                        coapPutRequestLightColor.sendRequest();
-                                                    } catch (IoTInventoryDataManagerException e) {
-                                                        e.printStackTrace();
-                                                    }
-                                                    break;
-                                                default:
-                                                    break;
-                                            }
-                                        });
-                                    });
+
+                                    if(getLocation(locationId).get().getPolicyDescriptor().isSweetNight() && LocalTime.now().getHour() > 0 && LocalTime.now().getHour() < 18) {
+                                        applySweetNightPolicyManager(locationId);
+                                    } else {
+                                        applyNotSweetNightPolicyManager(locationId);
+                                    }
+
                                 } catch (IoTInventoryDataManagerException e) {
                                     e.printStackTrace();
                                 }
+
+                            // If PresenceSensor stops detecting someone
                             } else {
-                                try {
-                                    getDevicesListByType(locationId, DeviceType.LIGHT_CONTROLLER.getValue()).forEach(device -> {
-                                        device.getResourcePaths().forEach(path -> {
-                                            logger.info("Path: {}", getURLDevice(device, path));
-                                            switch (path) {
-                                                case ResourceType.LIGHT_SWITCH:
-                                                    CoapPutRequestLightSwitch coapPutRequestLightSwitch = new CoapPutRequestLightSwitch(getURLDevice(device, path));
-                                                    // If presence sensor is false turn off the light
-                                                    coapPutRequestLightSwitch.setValue(false);
-                                                    coapPutRequestLightSwitch.sendRequest();
-                                                    try {
-                                                        logger.info("Turn off the light {} in the room {} with id {}",device.getName() ,getLocation(locationId).get().getRoom(), getLocation(locationId).get().getId());
-                                                    } catch (IoTInventoryDataManagerException e) {
-                                                        e.printStackTrace();
-                                                    }
-                                                    break;
-                                                default:
-                                                    break;
-                                            }
-                                        });
-                                    });
-                                } catch (IoTInventoryDataManagerException e) {
-                                    e.printStackTrace();
-                                }
+                                turnOffTheLights(locationId);
                             }
                         } else if (deviceDescriptor.getType().equals(DeviceType.LIGHT_CONTROLLER.getValue())) {
                             String content = response.getResponseText();
@@ -180,6 +135,130 @@ public class DataCollectorPolicyManager extends DefaultIotInventoryDataManger {
                 device.getHost(),
                 device.getPort(),
                 resourcePath);
+    }
+
+    private void applySweetNightPolicyManager(String locationId) {
+
+        try {
+
+            getDevicesListByType(locationId, DeviceType.LIGHT_CONTROLLER.getValue()).forEach(device -> {
+                device.getResourcePaths().forEach(path -> {
+                    logger.info("Send put request to device with URI: {}", getURLDevice(device, path));
+                    switch (path) {
+                        case ResourceType.LIGHT_SWITCH:
+                            CoapPutRequestLightSwitch coapPutRequestLightSwitch = new CoapPutRequestLightSwitch(getURLDevice(device, path));
+                            // If presence sensor is true turn on the light
+                            coapPutRequestLightSwitch.setValue(true);
+                            coapPutRequestLightSwitch.sendRequest();
+                            try {
+                                logger.info("Turn on the light {} in the room {} with id {}", device.getName(), getLocation(locationId).get().getRoom(), getLocation(locationId).get().getId());
+                            } catch (IoTInventoryDataManagerException e) {
+                                e.printStackTrace();
+                            }
+                            break;
+                        case ResourceType.LIGHT_INTENSITY:
+                            try {
+                                CoapPutRequestLightIntensity coapPutRequestLightIntensity = new CoapPutRequestLightIntensity(getURLDevice(device, path), getLocation(locationId).get().getPolicyDescriptor().getLightIntensitySweetNight());
+                                coapPutRequestLightIntensity.sendRequest();
+                            } catch (IoTInventoryDataManagerException e) {
+                                e.printStackTrace();
+                            }
+                            break;
+                        case ResourceType.LIGHT_COLOR:
+                            try {
+                                CoapPutRequestLightColor coapPutRequestLightColor = new CoapPutRequestLightColor(getURLDevice(device, path), getLocation(locationId).get().getPolicyDescriptor().getLightColorSweetNight());
+                                coapPutRequestLightColor.sendRequest();
+                            } catch (IoTInventoryDataManagerException e) {
+                                e.printStackTrace();
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                });
+            });
+
+        } catch (IoTInventoryDataManagerException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void applyNotSweetNightPolicyManager(String locationId) {
+
+        try {
+
+            getDevicesListByType(locationId, DeviceType.LIGHT_CONTROLLER.getValue()).forEach(device -> {
+                device.getResourcePaths().forEach(path -> {
+                    logger.info("Send put request to device with URI: {}", getURLDevice(device, path));
+                    switch (path) {
+                        case ResourceType.LIGHT_SWITCH:
+                            CoapPutRequestLightSwitch coapPutRequestLightSwitch = new CoapPutRequestLightSwitch(getURLDevice(device, path));
+                            // If presence sensor is true turn on the light
+                            coapPutRequestLightSwitch.setValue(true);
+                            coapPutRequestLightSwitch.sendRequest();
+                            try {
+                                logger.info("Turn on the light {} in the room {} with id {}", device.getName(), getLocation(locationId).get().getRoom(), getLocation(locationId).get().getId());
+                            } catch (IoTInventoryDataManagerException e) {
+                                e.printStackTrace();
+                            }
+                            break;
+                        case ResourceType.LIGHT_INTENSITY:
+                            try {
+                                CoapPutRequestLightIntensity coapPutRequestLightIntensity = new CoapPutRequestLightIntensity(getURLDevice(device, path), getLocation(locationId).get().getPolicyDescriptor().getLightIntensity());
+                                coapPutRequestLightIntensity.sendRequest();
+                            } catch (IoTInventoryDataManagerException e) {
+                                e.printStackTrace();
+                            }
+                            break;
+                        case ResourceType.LIGHT_COLOR:
+                            try {
+                                CoapPutRequestLightColor coapPutRequestLightColor = new CoapPutRequestLightColor(getURLDevice(device, path), getLocation(locationId).get().getPolicyDescriptor().getLightColor());
+                                coapPutRequestLightColor.sendRequest();
+                            } catch (IoTInventoryDataManagerException e) {
+                                e.printStackTrace();
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                });
+            });
+
+        } catch (IoTInventoryDataManagerException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void turnOffTheLights(String locationId) {
+
+        try {
+
+            getDevicesListByType(locationId, DeviceType.LIGHT_CONTROLLER.getValue()).forEach(device -> {
+                device.getResourcePaths().forEach(path -> {
+                    logger.info("Path: {}", getURLDevice(device, path));
+                    switch (path) {
+                        case ResourceType.LIGHT_SWITCH:
+                            CoapPutRequestLightSwitch coapPutRequestLightSwitch = new CoapPutRequestLightSwitch(getURLDevice(device, path));
+                            // If presence sensor is false turn off the light
+                            coapPutRequestLightSwitch.setValue(false);
+                            coapPutRequestLightSwitch.sendRequest();
+                            try {
+                                logger.info("Turn off the light {} in the room {} with id {}",device.getName() ,getLocation(locationId).get().getRoom(), getLocation(locationId).get().getId());
+                            } catch (IoTInventoryDataManagerException e) {
+                                e.printStackTrace();
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                });
+            });
+
+        } catch (IoTInventoryDataManagerException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
