@@ -3,6 +3,7 @@ package it.unimore.iot.smart.home.project.simulated_devices.server.resource.coap
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import it.unimore.iot.smart.home.project.simulated_devices.message.MessageSenMLColor;
 import it.unimore.iot.smart.home.project.simulated_devices.server.resource.raw.LightRawColor;
 import it.unimore.iot.smart.home.project.simulated_devices.server.resource.raw.ResourceDataListener;
 import it.unimore.iot.smart.home.project.simulated_devices.server.resource.raw.SmartObjectResource;
@@ -143,7 +144,50 @@ public class CoapLightColorParameterResource extends CoapResource {
 
         try{
 
+            // TODO: Grab put request in senML + JSON
+            /*
+            //If the request specify the MediaType as JSON or JSON+SenML
+            if ((exchange.getRequestOptions().getAccept() == MediaTypeRegistry.APPLICATION_SENML_JSON ||
+                    exchange.getRequestOptions().getAccept() == MediaTypeRegistry.APPLICATION_JSON)
+                    && exchange.getRequestPayload() != null) {
+
+                String content = new String(exchange.getRequestPayload());
+
+                MessageSenMLColor message = objectMapper.readValue(content, MessageSenMLColor.class);
+
+                logger.info("Submitted value APPLICATION_SENML_JSON: {}", message);
+
+                //Update internal status
+                this.updatedColorValue = message.getValue();
+                this.lightRawColor.setUpdatedValue(this.updatedColorValue);
+
+                logger.info("Resource Status Updated APPLICATION_SENML_JSON: {}", this.updatedColorValue);
+
+                exchange.respond(CoAP.ResponseCode.CHANGED);
+
+
             //If the request body is available
+            } else if(exchange.getRequestOptions().getAccept() == MediaTypeRegistry.TEXT_PLAIN && exchange.getRequestPayload() != null){
+
+                String submittedValue = new String(exchange.getRequestPayload());
+
+                logger.info("Submitted value: {}", submittedValue);
+
+                JsonNode node = objectMapper.readTree(new String(exchange.getRequestPayload()));
+                HashMap<String, Integer> colorMap = new HashMap<String, Integer>();
+                colorMap.put("red", node.get("red").asInt());
+                colorMap.put("green", node.get("green").asInt());
+                colorMap.put("blue", node.get("blue").asInt());
+
+                //Update internal status
+                this.updatedColorValue = colorMap;
+                this.lightRawColor.setUpdatedValue(this.updatedColorValue);
+
+                logger.info("Resource Status Updated: {}", this.updatedColorValue);
+
+                exchange.respond(CoAP.ResponseCode.CHANGED);
+            }
+            */
             if(exchange.getRequestPayload() != null){
 
                 String submittedValue = new String(exchange.getRequestPayload());

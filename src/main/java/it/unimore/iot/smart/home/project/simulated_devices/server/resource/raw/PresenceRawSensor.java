@@ -22,13 +22,13 @@ public class PresenceRawSensor extends SmartObjectResource<Boolean> {
 
     // Properties for simulation
     // milliseconds
-    private static final long PRESENCE_DURATION_TIME_MIN = 2000;
+    private static final long PRESENCE_DURATION_TIME_MIN = 8000;
 
-    private static final long PRESENCE_DURATION_TIME_MAX = 10000;
+    private static final long PRESENCE_DURATION_TIME_MAX = 16000;
 
-    private static final long PRESENCE_DETECTION_TIME_MIN = 2000;
+    private static final long PRESENCE_DETECTION_TIME_MIN = 3000;
 
-    private static final long PRESENCE_DETECTION_TIME_MAX = 5000;
+    private static final long PRESENCE_DETECTION_TIME_MAX = 6000;
 
     {
         this.isPresence = false;
@@ -72,18 +72,18 @@ public class PresenceRawSensor extends SmartObjectResource<Boolean> {
                         long presenceDetectionEventTime = (long) (PRESENCE_DETECTION_TIME_MIN + ((PRESENCE_DETECTION_TIME_MAX - PRESENCE_DETECTION_TIME_MIN) * random.nextDouble()));
                         long presenceDuration = (long) (PRESENCE_DURATION_TIME_MIN + ((PRESENCE_DURATION_TIME_MAX - PRESENCE_DURATION_TIME_MIN) * random.nextDouble()));
 
-                        // Presence detection true
+                        // Presence detection false
+                        logger.info("No presence");
+                        setPresence(false);
                         logger.info("Presence Detection Event Time {}", presenceDetectionEventTime);
                         this.sleep(presenceDetectionEventTime);
+
+                        // Presence detection true
                         logger.info("Presence Detection");
                         setPresence(true);
-
-
                         logger.info("Presence Duration {}", presenceDuration);
                         this.sleep(presenceDuration);
-                        logger.info("No presence");
-                        // Presence detection false
-                        setPresence(false);
+
 
                     }
 

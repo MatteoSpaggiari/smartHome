@@ -11,36 +11,41 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
-
 /**
  * A simple CoAP Synchronous Client implemented using Californium Java Library
- * The simple client send a GET request to a target CoAP Resource with some custom request parameters
+ * The simple client send a PUT request to a target CoAP Resource with some custom request parameters
+ * and payload
  *
  * @author Marco Picone, Ph.D. - picone.m@gmail.com
  * @project coap-demo-smartobject
  * @created 20/10/2020 - 09:19
  */
-public class CoapGetClientProcess {
+public class CoapPutSenmlClientProcess {
 
-	private final static Logger logger = LoggerFactory.getLogger(CoapGetClientProcess.class);
+	private final static Logger logger = LoggerFactory.getLogger(CoapPutSenmlClientProcess.class);
 
-	private static final String COAP_ENDPOINT = "coap://127.0.0.1:5984/light-controller/switch";
+	private static final String COAP_ENDPOINT = "coap://127.0.0.1:5783/light-controller/switch";
 
 	public static void main(String[] args) {
 		
 		//Initialize coapClient
 		CoapClient coapClient = new CoapClient(COAP_ENDPOINT);
 
-		//Request Class is a generic CoAP message: in this case we want a GET.
+		//Request Class is a generic CoAP message: in this case we want a PUT.
 		//"Message ID", "Token" and other header's fields can be set 
-		Request request = new Request(Code.GET);
+		Request request = new Request(Code.PUT);
+
+		//Set PUT request's payload
+		String myPayload = "60.0";
+		logger.info("PUT Request Random Payload: {}", myPayload);
+		request.setPayload(myPayload);
 
 		//Set Request as Confirmable
 		request.setConfirmable(true);
 
 		logger.info("Request Pretty Print: \n{}", Utils.prettyPrint(request));
 
-		//Synchronously send the GET message (blocking call)
+		//Synchronously send the POST request (blocking call)
 		CoapResponse coapResp = null;
 
 		try {

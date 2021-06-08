@@ -2,6 +2,7 @@ package it.unimore.iot.smart.home.project.simulated_devices.server.resource.coap
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import it.unimore.iot.smart.home.project.simulated_devices.message.MessageSenMLIntensity;
 import it.unimore.iot.smart.home.project.simulated_devices.server.resource.raw.LightRawIntensity;
 import it.unimore.iot.smart.home.project.simulated_devices.server.resource.raw.ResourceDataListener;
 import it.unimore.iot.smart.home.project.simulated_devices.server.resource.raw.SmartObjectResource;
@@ -135,7 +136,43 @@ public class CoapLightIntensityParameterResource extends CoapResource {
 
         try{
 
+            // TODO: Grab put request in senML + JSON
+            /*
+            //If the request specify the MediaType as JSON or JSON+SenML
+            if ((exchange.getRequestOptions().getAccept() == MediaTypeRegistry.APPLICATION_SENML_JSON ||
+                    exchange.getRequestOptions().getAccept() == MediaTypeRegistry.APPLICATION_JSON)
+                    && exchange.getRequestPayload() != null) {
+
+                String content = new String(exchange.getRequestPayload());
+
+                MessageSenMLIntensity message = objectMapper.readValue(content, MessageSenMLIntensity.class);
+
+                logger.info("Submitted value APPLICATION_SENML_JSON: {}", message);
+
+                //Update internal status
+                this.updatedIntensityValue = message.getValue();
+                this.lightRawIntensity.setUpdatedValue(this.updatedIntensityValue);
+
+                logger.info("Resource Status Updated APPLICATION_SENML_JSON: {}", this.updatedIntensityValue);
+
+                exchange.respond(CoAP.ResponseCode.CHANGED);
+
             //If the request body is available
+            } else if(exchange.getRequestPayload() != null){
+
+                double submittedValue = Double.parseDouble(new String(exchange.getRequestPayload()));
+
+                logger.info("Submitted value: {}", submittedValue);
+
+                //Update internal status
+                this.updatedIntensityValue = submittedValue;
+                this.lightRawIntensity.setUpdatedValue(this.updatedIntensityValue);
+
+                logger.info("Resource Status Updated: {}", this.updatedIntensityValue);
+
+                exchange.respond(CoAP.ResponseCode.CHANGED);
+            }
+            */
             if(exchange.getRequestPayload() != null){
 
                 double submittedValue = Double.parseDouble(new String(exchange.getRequestPayload()));

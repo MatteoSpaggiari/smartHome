@@ -22,7 +22,7 @@ public class SmartHomeProcess {
 
         // Additional Devices that will be added later in the edge application through HTTP requests
         PresenceSensorServer presenceSensorServerId6 = new PresenceSensorServer(5985, "6", false);
-        LightControllerServer lightControllerServerId7 = new LightControllerServer(5986, "7", false, 180.0, 200, 100, 90);
+        LightControllerServer lightControllerServerId7 = new LightControllerServer(5986, "7", false, 100.0, 200, 100, 90);
 
         listCoapServers.add(presenceSensorServerId6);
         listCoapServers.add(lightControllerServerId7);

@@ -1,0 +1,133 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    font-size: 16px;
+    background-color: #ddd;
+}
+
+h1 {
+    color: #fff;
+    background-color: #01579B;
+    text-align: center;
+    letter-spacing: 1px;
+    margin: 0 auto 2rem;
+    padding: 1rem;
+    box-shadow: 0 0 8px 6px #444;
+}
+
+.locations {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-around;
+    align-items: center;
+    align-content: space-around;
+    padding: 1rem;
+}
+
+.location {
+    margin-bottom: 2rem;
+    box-sizing: border-box;
+    flex-basis: 30%;
+    align-self: center;
+    box-shadow: 4px 4px 8px #444;
+    border-radius: 0.5rem 0.5rem 0 0;
+    background-color: #F5F5F5;
+    overflow: hidden;
+}
+
+.location .room {
+    margin: 0 auto;
+    padding: 0.4rem;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    background-color: #01579B;
+    color: #E1F5FE;
+}
+
+.location .floor {
+    margin: 0 auto;
+    padding: 0.4rem;
+    text-align: center;
+    letter-spacing: 1px;
+    background-color: #0091EA;
+    color: #E1F5FE;
+}
+
+.location .elements {
+    list-style-type: none;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: flex-start;
+    align-items: center;
+    align-content: space-around;
+    padding: 1rem;
+}
+
+.location .elements li {
+    position: relative;
+    list-style-type: none;
+    margin: 0 0.4rem;
+    padding: 0.3rem;
+    border: 1px solid #9E9E9E;
+    border-radius: 0.3rem;
+    overflow: hidden;
+}
+
+.location .elements li  .light-intensity{
+    position: absolute;
+    margin: 0 auto;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    text-align: center;
+    background-color: rgba(255, 255, 255, 0.8);
+    font-weight: bold;
+}
+
+.location .elements li img {
+    max-width: 100%;
+    width: 80px;
+    height: auto;
+    text-align: center;
+}
+
+.location .elements .policy {
+    position: relative;
+}
+
+.location .elements .policy .sweet-night {
+    position: absolute;
+    padding: 0.2rem;
+    top: 3px;
+    right: 3px;
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    text-align: center;
+    border: 1px solid #9E9E9E;
+    border-radius: 20px;
+    box-shadow: 2px 2px 6px #444;
+}
+
+.location .elements .policy.active,
+.location .elements .presence-sensor.presence,
+.location .elements .policy .sweet-night.active
+{
+    background-color: #C8E6C9;
+}
+
+.location .elements .policy.inactive,
+.location .elements .presence-sensor.no-presence,
+.location .elements .policy .sweet-night.inactive {
+    background-color: #FFCDD2;
+}
+.location .elements .presence-sensor.no-presence,
+.location .elements .light-controller.no-active {
+    background-color: #E0E0E0;
+}
+

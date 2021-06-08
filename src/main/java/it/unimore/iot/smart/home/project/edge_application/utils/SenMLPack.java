@@ -11,18 +11,4 @@ import java.util.ArrayList;
  * @created 27/10/2020 - 22:27
  */
 public class SenMLPack extends ArrayList<SenMLRecord> {
-
-    private ArrayList<SenMLRecord> list;
-
-    {
-        this.list = new ArrayList<SenMLRecord>();
-    }
-
-    @Override
-    public String toString() {
-        final StringBuffer sb = new StringBuffer("{");
-        sb.append(list);
-        sb.append('}');
-        return sb.toString();
-    }
 }

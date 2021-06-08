@@ -1,8 +1,10 @@
 package it.unimore.iot.smart.home.project.edge_application.persistence;
 
 import it.unimore.iot.smart.home.project.edge_application.dto.LocationUpdateRequest;
+import it.unimore.iot.smart.home.project.edge_application.exception.IoTInventoryDataManagerColorValue;
 import it.unimore.iot.smart.home.project.edge_application.exception.IoTInventoryDataManagerConflict;
 import it.unimore.iot.smart.home.project.edge_application.exception.IoTInventoryDataManagerException;
+import it.unimore.iot.smart.home.project.edge_application.exception.IoTInventoryDataManagerIntensityValue;
 import it.unimore.iot.smart.home.project.edge_application.model.DeviceDescriptor;
 import it.unimore.iot.smart.home.project.edge_application.model.LocationDescriptor;
 import it.unimore.iot.smart.home.project.edge_application.model.PolicyDescriptor;
@@ -42,9 +44,9 @@ public interface IIotInventoryDataManager {
 
     public Optional<DeviceDescriptor> getDevice(String locationId, String deviceId) throws IoTInventoryDataManagerException;
 
-    public DeviceDescriptor createNewDevice(String locationId, DeviceDescriptor deviceDescriptor) throws IoTInventoryDataManagerException, IoTInventoryDataManagerConflict;
+    public DeviceDescriptor createNewDevice(String locationId, DeviceDescriptor deviceDescriptor) throws IoTInventoryDataManagerException, IoTInventoryDataManagerConflict, IoTInventoryDataManagerIntensityValue, IoTInventoryDataManagerColorValue;
 
-    public DeviceDescriptor updateDevice(String locationId, DeviceDescriptor deviceDescriptor) throws IoTInventoryDataManagerException;
+    public DeviceDescriptor updateDevice(String locationId, DeviceDescriptor deviceDescriptor) throws IoTInventoryDataManagerException, IoTInventoryDataManagerIntensityValue, IoTInventoryDataManagerColorValue;
 
     public DeviceDescriptor deleteDevice(String locationId, String deviceId) throws IoTInventoryDataManagerException;
 
@@ -52,6 +54,6 @@ public interface IIotInventoryDataManager {
 
     public Optional<PolicyDescriptor> getPolicy(String locationId) throws IoTInventoryDataManagerException;
 
-    public PolicyDescriptor updatePolicy(String locationId, PolicyDescriptor policyManagerDescriptor) throws IoTInventoryDataManagerException;
+    public PolicyDescriptor updatePolicy(String locationId, PolicyDescriptor policyManagerDescriptor) throws IoTInventoryDataManagerException, IoTInventoryDataManagerIntensityValue, IoTInventoryDataManagerColorValue;
 
 }

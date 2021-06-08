@@ -12,7 +12,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://127.0.0.1:7070/api/iot/inventory/location/",
+					"raw": "http://127.0.0.1:7070/api/iot/inventory/location",
 					"protocol": "http",
 					"host": [
 						"127",
@@ -25,8 +25,7 @@
 						"api",
 						"iot",
 						"inventory",
-						"location",
-						""
+						"location"
 					]
 				}
 			},
@@ -162,7 +161,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n      \"room\": \"Bedroom 2\",\r\n      \"floor\": \"First floor\"\r\n}",
+					"raw": "{\r\n    \"room\": \"Bathroom\",\r\n    \"floor\": \"Ground floor\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -265,7 +264,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://127.0.0.1:7070/api/iot/inventory/location/1/device",
+					"raw": "http://127.0.0.1:7070/api/iot/inventory/location/2/device",
 					"protocol": "http",
 					"host": [
 						"127",
@@ -279,7 +278,7 @@
 						"iot",
 						"inventory",
 						"location",
-						"1",
+						"2",
 						"device"
 					]
 				}
@@ -287,12 +286,12 @@
 			"response": []
 		},
 		{
-			"name": "Get Devices with Query Param Type in a specific Location",
+			"name": "Get Devices of a Type in a specific Location",
 			"request": {
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://127.0.0.1:7070/api/iot/inventory/location/1/device/?type=presence_sensor",
+					"raw": "http://127.0.0.1:7070/api/iot/inventory/location/1/device/presence_sensor",
 					"protocol": "http",
 					"host": [
 						"127",
@@ -308,13 +307,7 @@
 						"location",
 						"1",
 						"device",
-						""
-					],
-					"query": [
-						{
-							"key": "type",
-							"value": "presence_sensor"
-						}
+						"presence_sensor"
 					]
 				}
 			},
@@ -326,7 +319,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://127.0.0.1:7070/api/iot/inventory/location/1/device/2",
+					"raw": "http://127.0.0.1:7070/api/iot/inventory/location/1/device/light_controller/2",
 					"protocol": "http",
 					"host": [
 						"127",
@@ -342,6 +335,7 @@
 						"location",
 						"1",
 						"device",
+						"light_controller",
 						"2"
 					]
 				}
@@ -392,7 +386,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"id\": 7,\r\n    \"name\": \"Light Controller 7\",\r\n    \"software_version\": 0.1,\r\n    \"manufacturer\": \"demo\",\r\n    \"host\": \"127.0.0.1\",\r\n    \"port\": \"5986\",\r\n    \"resource_paths\": [\r\n        \"light-controller/switch\",\r\n        \"light-controller/intensity\",\r\n        \"light-controller/color\"\r\n    ],\r\n    \"type\": \"light_controller\",\r\n    \"active\": true,\r\n    \"intensity\": 180.0,\r\n    \"color\":\r\n    {\r\n        \"red\": 200,\r\n        \"green\": 100,\r\n        \"blue\": 90\r\n    }\r\n}",
+					"raw": "{\r\n    \"id\": 7,\r\n    \"name\": \"Light Controller 7\",\r\n    \"software_version\": 0.1,\r\n    \"manufacturer\": \"demo\",\r\n    \"host\": \"127.0.0.1\",\r\n    \"port\": \"5986\",\r\n    \"resource_paths\": [\r\n        \"light-controller/switch\",\r\n        \"light-controller/intensity\",\r\n        \"light-controller/color\"\r\n    ],\r\n    \"type\": \"light_controller\",\r\n    \"active\": true,\r\n    \"intensity\": 100.0,\r\n    \"color\":\r\n    {\r\n        \"red\": 200,\r\n        \"green\": 100,\r\n        \"blue\": 90\r\n    }\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -400,7 +394,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://127.0.0.1:7070/api/iot/inventory/location/0440437c-5045-427b-827d-1c57f0c02af0/device/light_controller",
+					"raw": "http://127.0.0.1:7070/api/iot/inventory/location/63f21600-ce5e-4718-a14d-19d711aeaa46/device/light_controller",
 					"protocol": "http",
 					"host": [
 						"127",
@@ -414,7 +408,7 @@
 						"iot",
 						"inventory",
 						"location",
-						"0440437c-5045-427b-827d-1c57f0c02af0",
+						"63f21600-ce5e-4718-a14d-19d711aeaa46",
 						"device",
 						"light_controller"
 					]
@@ -429,7 +423,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"id\": \"2\",\r\n    \"name\": \"Light Controller\",\r\n    \"software_version\": 0.1,\r\n    \"manufacturer\": \"demo\",\r\n    \"host\": \"127.0.0.1\",\r\n    \"port\": \"5783\",\r\n    \"resource_paths\": [\r\n        \"light-controller/switch\",\r\n        \"light-controller/intensity\",\r\n        \"light-controller/color\"\r\n    ],\r\n    \"type\": \"light_controller\",\r\n    \"active\": true,\r\n    \"intensity\": 100.0,\r\n    \"color\":\r\n    {\r\n        \"red\": 230,\r\n        \"green\": 200,\r\n        \"blue\": 200\r\n    }\r\n}",
+					"raw": "{\r\n    \"id\": \"4\",\r\n    \"name\": \"Light Controller\",\r\n    \"manufacturer\": \"demo\",\r\n    \"host\": \"127.0.0.1\",\r\n    \"port\": \"5783\",\r\n    \"type\": \"light_controller\",\r\n    \"intensity\": 80.0,\r\n    \"color\": {\r\n        \"red\": 230,\r\n        \"green\": 0,\r\n        \"blue\": 0\r\n        },\r\n    \"active\": true,\r\n    \"software_version\": 0.1,\r\n    \"resource_paths\": [\r\n        \"light-controller/switch\",\r\n        \"light-controller/intensity\",\r\n        \"light-controller/color\"\r\n    ]\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -437,7 +431,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://127.0.0.1:7070/api/iot/inventory/location/1/device/light_controller/2",
+					"raw": "http://127.0.0.1:7070/api/iot/inventory/location/2/device/light_controller/4",
 					"protocol": "http",
 					"host": [
 						"127",
@@ -451,10 +445,10 @@
 						"iot",
 						"inventory",
 						"location",
-						"1",
+						"2",
 						"device",
 						"light_controller",
-						"2"
+						"4"
 					]
 				}
 			},
@@ -475,7 +469,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://127.0.0.1:7070/api/iot/inventory/location/2/device/4",
+					"raw": "http://127.0.0.1:7070/api/iot/inventory/location/2/device/light_controller/4",
 					"protocol": "http",
 					"host": [
 						"127",
@@ -491,6 +485,7 @@
 						"location",
 						"2",
 						"device",
+						"light_controller",
 						"4"
 					]
 				}
@@ -531,7 +526,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"active\": true,\r\n    \"light_intensity\": 50,\r\n    \"light_color\":\r\n    {\r\n        \"red\": 255,\r\n        \"green\": 0,\r\n        \"blue\": 255\r\n    },\r\n    \"sweet_night\": false\r\n}",
+					"raw": "{\r\n    \"active\": true,\r\n    \"light_intensity\": 80.0,\r\n    \"light_color\": {\r\n        \"red\": 10,\r\n        \"green\": 210,\r\n        \"blue\": 10\r\n    },\r\n    \"sweet_night\": true,\r\n    \"light_intensity_sweet_night\": 30.0,\r\n    \"light_color_sweet_night\": {\r\n        \"red\": 0,\r\n        \"green\": 240,\r\n        \"blue\": 0\r\n    }\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -539,7 +534,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://127.0.0.1:7070/api/iot/inventory/location/0440437c-5045-427b-827d-1c57f0c02af0/policy",
+					"raw": "http://127.0.0.1:7070/api/iot/inventory/location/085a2d59-b158-4487-8958-9b5ee91b4c88/policy",
 					"protocol": "http",
 					"host": [
 						"127",
@@ -553,7 +548,7 @@
 						"iot",
 						"inventory",
 						"location",
-						"0440437c-5045-427b-827d-1c57f0c02af0",
+						"085a2d59-b158-4487-8958-9b5ee91b4c88",
 						"policy"
 					]
 				}

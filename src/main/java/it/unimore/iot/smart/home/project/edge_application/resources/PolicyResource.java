@@ -6,7 +6,10 @@ import io.dropwizard.jersey.errors.ErrorMessage;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import it.unimore.iot.smart.home.project.edge_application.dto.*;
+import it.unimore.iot.smart.home.project.edge_application.exception.IoTInventoryDataManagerColorValue;
+import it.unimore.iot.smart.home.project.edge_application.exception.IoTInventoryDataManagerConflict;
 import it.unimore.iot.smart.home.project.edge_application.exception.IoTInventoryDataManagerException;
+import it.unimore.iot.smart.home.project.edge_application.exception.IoTInventoryDataManagerIntensityValue;
 import it.unimore.iot.smart.home.project.edge_application.model.PolicyDescriptor;
 import it.unimore.iot.smart.home.project.edge_application.services.AppConfig;
 import org.slf4j.Logger;
@@ -110,6 +113,10 @@ public class PolicyResource {
 
             return Response.noContent().build();
 
+        } catch (IoTInventoryDataManagerIntensityValue e){
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(),"The intensity value must be between 0.0 and 100.0!")).build();
+        } catch (IoTInventoryDataManagerColorValue e){
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(),"The color value must be between 0 and 255!")).build();
         } catch (Exception e){
             e.printStackTrace();
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),"Internal Server Error !")).build();

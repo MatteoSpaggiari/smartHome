@@ -23,8 +23,10 @@ public class PolicyDescriptor {
     @JsonProperty("sweet_night")
     private boolean sweetNight;
 
+    @JsonProperty("light_intensity_sweet_night")
     private Double lightIntensitySweetNight;
 
+    @JsonProperty("light_color_sweet_night")
     private HashMap<String, Integer> lightColorSweetNight;
 
     // Default Policy
@@ -33,27 +35,19 @@ public class PolicyDescriptor {
         this.active = false;
         this.lightIntensity = 80.0;
         this.lightColor = new HashMap<String, Integer>();
-        this.lightColor.put("Red", 255);
-        this.lightColor.put("Green", 255);
-        this.lightColor.put("Blue", 255);
+        this.lightColor.put("red", 255);
+        this.lightColor.put("green", 255);
+        this.lightColor.put("blue", 255);
         this.sweetNight = false;
         this.lightIntensitySweetNight = 30.0;
         this.lightColorSweetNight = new HashMap<String, Integer>();
         // Light blue
-        this.lightColorSweetNight.put("Red", 199);
-        this.lightColorSweetNight.put("Green", 240);
-        this.lightColorSweetNight.put("Blue", 255);
+        this.lightColorSweetNight.put("red", 199);
+        this.lightColorSweetNight.put("green", 240);
+        this.lightColorSweetNight.put("blue", 255);
     }
 
     public PolicyDescriptor() {
-    }
-
-    public PolicyDescriptor(String id, boolean active, Double lightIntensity, HashMap<String, Integer> lightColor, boolean sweetNight) {
-        this.id = id;
-        this.active = active;
-        this.lightIntensity = lightIntensity;
-        this.lightColor = lightColor;
-        this.sweetNight = sweetNight;
     }
 
     public PolicyDescriptor(String id, boolean active, Double lightIntensity, HashMap<String, Integer> lightColor, boolean sweetNight, Double lightIntensitySweetNight, HashMap<String, Integer> lightColorSweetNight) {

@@ -1,12 +1,16 @@
 package it.unimore.iot.smart.home.project.simulated_devices.client;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import it.unimore.iot.smart.home.project.simulated_devices.message.MessageSenMLPresence;
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapHandler;
 import org.eclipse.californium.core.CoapObserveRelation;
 import org.eclipse.californium.core.CoapResponse;
-import org.eclipse.californium.core.coap.Request;
+import org.eclipse.californium.core.coap.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 
 /**
  * A simple CoAP Synchronous Client implemented using Californium Java Library
@@ -22,14 +26,19 @@ public class CoapObservingClientProcess {
 
     public static void main(String[] args) {
 
-        String targetCoapResourceURL = "coap://127.0.0.1:5683/temperature";
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        String targetCoapResourceURL = "coap://127.0.0.1:5683/presence-sensor";
 
         CoapClient client = new CoapClient(targetCoapResourceURL);
 
         logger.info("OBSERVING ... {}", targetCoapResourceURL);
 
-        Request request = Request.newGet().setURI(targetCoapResourceURL).setObserve();
+        Request request = new Request(CoAP.Code.GET);
+        //Request request = Request.newGet().setURI(targetCoapResourceURL).setObserve();
         request.setConfirmable(true);
+        //Set Options to receive the response as JSON+SenML MediaType
+        request.setOptions(new OptionSet().setObserve(0).setAccept(MediaTypeRegistry.APPLICATION_SENML_JSON));
 
         // NOTE:
         // The client.observe(Request, CoapHandler) method visibility has been changed from "private"
@@ -38,9 +47,22 @@ public class CoapObservingClientProcess {
         CoapObserveRelation relation = client.observe(request, new CoapHandler() {
 
             public void onLoad(CoapResponse response) {
+
                 String content = response.getResponseText();
                 //logger.info("Notification Response Pretty Print: \n{}", Utils.prettyPrint(response));
                 logger.info("NOTIFICATION Body: " + content);
+
+                try {
+
+                    MessageSenMLPresence message = objectMapper.readValue(content, MessageSenMLPresence.class);
+                    logger.info("Message receveid {}", message);
+                    logger.info("Message receveid {}", message.getValue());
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+
             }
 
             public void onError() {

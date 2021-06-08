@@ -24,7 +24,7 @@ public class CoapPutClientProcess {
 
 	private final static Logger logger = LoggerFactory.getLogger(CoapPutClientProcess.class);
 
-	private static final String COAP_ENDPOINT = "coap://127.0.0.1:5983/light-controller/color";
+	private static final String COAP_ENDPOINT = "coap://127.0.0.1:5783/light-controller/switch";
 
 	public static void main(String[] args) {
 		
@@ -36,7 +36,7 @@ public class CoapPutClientProcess {
 		Request request = new Request(Code.PUT);
 
 		//Set PUT request's payload
-		String myPayload = "true";
+		String myPayload = "60.0";
 		logger.info("PUT Request Random Payload: {}", myPayload);
 		request.setPayload(myPayload);
 

@@ -10,7 +10,9 @@ import it.unimore.iot.smart.home.project.edge_application.dto.LightControllerCre
 import it.unimore.iot.smart.home.project.edge_application.dto.LightControllerUpdateRequest;
 import it.unimore.iot.smart.home.project.edge_application.dto.PresenceSensorCreationRequest;
 import it.unimore.iot.smart.home.project.edge_application.dto.PresenceSensorUpdateRequest;
+import it.unimore.iot.smart.home.project.edge_application.exception.IoTInventoryDataManagerColorValue;
 import it.unimore.iot.smart.home.project.edge_application.exception.IoTInventoryDataManagerException;
+import it.unimore.iot.smart.home.project.edge_application.exception.IoTInventoryDataManagerIntensityValue;
 import it.unimore.iot.smart.home.project.edge_application.model.DeviceDescriptor;
 import it.unimore.iot.smart.home.project.edge_application.model.LightControllerDescriptor;
 import it.unimore.iot.smart.home.project.edge_application.model.PresenceSensorDescriptor;
@@ -54,14 +56,11 @@ public class DeviceResource {
 
     @GET
     @Path("/")
-    @ApiOperation(value="Get all available IoT devices or filter according to their location")
+    @ApiOperation(value="Get all available IoT devices in a location")
     public Response getDevices(@Context ContainerRequestContext req,
-                               @PathParam("location_id") String locationId,
-                               @QueryParam("type") String deviceType) {
+                               @PathParam("location_id") String locationId) {
 
         try {
-
-            logger.info("Loading all stored IoT Inventory Devices filtered by Type: {}", deviceType);
 
             //Check PathParam in the request
             if(locationId == null || !this.conf.getDataCollectorPolicyManager().getLocation(locationId).isPresent()) {
@@ -74,11 +73,7 @@ public class DeviceResource {
 
             List<DeviceDescriptor> deviceList = null;
 
-            //No filter applied
-            if(deviceType == null)
-                deviceList = this.conf.getDataCollectorPolicyManager().getDevicesList(locationId);
-            else
-                deviceList = this.conf.getDataCollectorPolicyManager().getDevicesListByType(locationId, deviceType);
+            deviceList = this.conf.getDataCollectorPolicyManager().getDevicesList(locationId);
 
             if(deviceList == null)
                 return Response.status(Response.Status.NOT_FOUND).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.NOT_FOUND.getStatusCode(),"Devices Not Found !")).build();
@@ -92,75 +87,35 @@ public class DeviceResource {
     }
 
     @GET
-    @Path("/{device_id}")
-    @ApiOperation(value="Get a Single Device")
-    public Response getDevice(@Context ContainerRequestContext req,
-                              @PathParam("location_id") String locationId,
-                              @PathParam("device_id") String deviceId) {
+    @Path("/{device_type}")
+    @ApiOperation(value="Get all available IoT devices in a location")
+    public Response getDevicesListByType(@Context ContainerRequestContext req,
+                                   @PathParam("location_id") String locationId,
+                                   @PathParam("device_type") String deviceType) {
 
         try {
-
-            logger.info("Loading Device Info for id: {}", deviceId);
 
             //Check PathParam in the request
             if(locationId == null || !this.conf.getDataCollectorPolicyManager().getLocation(locationId).isPresent()) {
                 return Response.status(Response.Status.BAD_REQUEST).type(MediaType.APPLICATION_JSON_TYPE).entity(
-                    new ErrorMessage(
-                        Response.Status.BAD_REQUEST.getStatusCode(),
-                        controlPathParamLocationId(locationId)
-                    )).build();
+                        new ErrorMessage(
+                                Response.Status.BAD_REQUEST.getStatusCode(),
+                                controlPathParamLocationId(locationId)
+                        )).build();
             }
 
-            //Check the request
-            if(deviceId == null)
-                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(),"Invalid Device Id Provided !")).build();
-
-            Optional<DeviceDescriptor> deviceDescriptor = this.conf.getDataCollectorPolicyManager().getDevice(locationId, deviceId);
-
-            if(!deviceDescriptor.isPresent())
-                return Response.status(Response.Status.NOT_FOUND).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.NOT_FOUND.getStatusCode(),"Device Not Found !")).build();
-
-            return Response.ok(deviceDescriptor.get()).build();
-
-        } catch (Exception e){
-            e.printStackTrace();
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),"Internal Server Error !")).build();
-        }
-    }
-
-    @DELETE
-    @Path("/{device_id}")
-    @ApiOperation(value="Delete a Single Device")
-    public Response deleteDevice(@Context ContainerRequestContext req,
-                                 @PathParam("location_id") String locationId,
-                                 @PathParam("device_id") String deviceId) {
-
-        try {
-
-            logger.info("Deleting Device with id: {}", deviceId);
-
-            //Check PathParam in the request
-            if(locationId == null || !this.conf.getDataCollectorPolicyManager().getLocation(locationId).isPresent()) {
-                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.APPLICATION_JSON_TYPE).entity(
-                    new ErrorMessage(
-                        Response.Status.BAD_REQUEST.getStatusCode(),
-                        controlPathParamLocationId(locationId)
-                    )).build();
+            if(deviceType == null) {
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(),"Invalid Device Type !")).build();
             }
 
-            //Check the request
-            if(deviceId == null)
-                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(),"Invalid Device Id Provided !")).build();
+            List<DeviceDescriptor> deviceList = null;
 
-            //Check if the device is available or not
-            Optional<DeviceDescriptor> deviceDescriptor = this.conf.getDataCollectorPolicyManager().getDevice(locationId, deviceId);
-            if(!deviceDescriptor.isPresent())
-                return Response.status(Response.Status.NOT_FOUND).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.NOT_FOUND.getStatusCode(),"Device Not Found !")).build();
+            deviceList = this.conf.getDataCollectorPolicyManager().getDevicesListByType(locationId, deviceType);
 
-            //Delete the device
-            this.conf.getDataCollectorPolicyManager().deleteDevice(locationId, deviceId);
+            if(deviceList == null)
+                return Response.status(Response.Status.NOT_FOUND).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.NOT_FOUND.getStatusCode(),"Devices Not Found !")).build();
 
-            return Response.noContent().build();
+            return Response.ok(deviceList).build();
 
         } catch (Exception e){
             e.printStackTrace();
@@ -210,12 +165,56 @@ public class DeviceResource {
 
             return Response.created(new URI(String.format("%s/%s", uriInfo.getAbsolutePath(), newDeviceDescriptor.getId()))).build();
 
+        } catch (IoTInventoryDataManagerIntensityValue e){
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(),"The intensity value must be between 0.0 and 100.0!")).build();
+        } catch (IoTInventoryDataManagerColorValue e){
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(),"The color value must be between 0 and 255!")).build();
         } catch (Exception e){
             e.printStackTrace();
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),"Internal Server Error !")).build();
         }
     }
 
+    @GET
+    @Path("/{device_type}/{device_id}")
+    @ApiOperation(value="Get a Single Device")
+    public Response getDevice(@Context ContainerRequestContext req,
+                              @PathParam("location_id") String locationId,
+                              @PathParam("device_type") String deviceType,
+                              @PathParam("device_id") String deviceId) {
+
+        try {
+
+            logger.info("Loading Device Info for id: {}", deviceId);
+
+            //Check PathParam in the request
+            if(locationId == null || !this.conf.getDataCollectorPolicyManager().getLocation(locationId).isPresent()) {
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.APPLICATION_JSON_TYPE).entity(
+                        new ErrorMessage(
+                                Response.Status.BAD_REQUEST.getStatusCode(),
+                                controlPathParamLocationId(locationId)
+                        )).build();
+            }
+
+            // Check if the request is valid
+            if(deviceType == null)
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(), "Invalid Device Type !")).build();
+
+            if(deviceId == null)
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(),"Invalid Device Id Provided !")).build();
+
+            Optional<DeviceDescriptor> deviceDescriptor = this.conf.getDataCollectorPolicyManager().getDevice(locationId, deviceId);
+
+            if(!deviceDescriptor.isPresent())
+                return Response.status(Response.Status.NOT_FOUND).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.NOT_FOUND.getStatusCode(),"Device Not Found !")).build();
+
+            return Response.ok(deviceDescriptor.get()).build();
+
+        } catch (Exception e){
+            e.printStackTrace();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),"Internal Server Error !")).build();
+        }
+    }
 
     @PUT
     @Path("/{device_type}/{device_id}")
@@ -240,14 +239,13 @@ public class DeviceResource {
                     )).build();
             }
 
+            // Check if the request is valid
             if(deviceType == null)
                 return Response.status(Response.Status.BAD_REQUEST).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(), "Invalid Device Type !")).build();
 
-            // Check the request
             if(deviceId == null)
                 return Response.status(Response.Status.BAD_REQUEST).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(),"Invalid Device Id Provided !")).build();
 
-            // Check if the request is valid
             if(deviceUpdateRequest == null)
                 return Response.status(Response.Status.BAD_REQUEST).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(),"Invalid request ! Check Device Id")).build();
 
@@ -273,11 +271,60 @@ public class DeviceResource {
 
             return Response.noContent().build();
 
+        } catch (IoTInventoryDataManagerIntensityValue e){
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(),"The intensity value must be between 0.0 and 100.0!")).build();
+        } catch (IoTInventoryDataManagerColorValue e){
+            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(),"The color value must be between 0 and 255!")).build();
         } catch (Exception e){
             e.printStackTrace();
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),"Internal Server Error !")).build();
         }
     }
+
+    @DELETE
+    @Path("/{device_type}/{device_id}")
+    @ApiOperation(value="Delete a Single Device")
+    public Response deleteDevice(@Context ContainerRequestContext req,
+                                 @PathParam("location_id") String locationId,
+                                 @PathParam("device_type") String deviceType,
+                                 @PathParam("device_id") String deviceId) {
+
+        try {
+
+            logger.info("Deleting Device with id: {}", deviceId);
+
+            //Check PathParam in the request
+            if(locationId == null || !this.conf.getDataCollectorPolicyManager().getLocation(locationId).isPresent()) {
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.APPLICATION_JSON_TYPE).entity(
+                        new ErrorMessage(
+                                Response.Status.BAD_REQUEST.getStatusCode(),
+                                controlPathParamLocationId(locationId)
+                        )).build();
+            }
+
+            // Check if the request is valid
+            if(deviceType == null)
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(), "Invalid Device Type !")).build();
+
+            if(deviceId == null)
+                return Response.status(Response.Status.BAD_REQUEST).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(),"Invalid Device Id Provided !")).build();
+
+            //Check if the device is available or not
+            Optional<DeviceDescriptor> deviceDescriptor = this.conf.getDataCollectorPolicyManager().getDevice(locationId, deviceId);
+            if(!deviceDescriptor.isPresent())
+                return Response.status(Response.Status.NOT_FOUND).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.NOT_FOUND.getStatusCode(),"Device Not Found !")).build();
+
+            //Delete the device
+            this.conf.getDataCollectorPolicyManager().deleteDevice(locationId, deviceId);
+
+            return Response.noContent().build();
+
+        } catch (Exception e){
+            e.printStackTrace();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),"Internal Server Error !")).build();
+        }
+    }
+
 
     private String controlPathParamLocationId(String locationId) {
         // Check if the location_id is null

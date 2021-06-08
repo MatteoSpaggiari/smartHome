@@ -6,6 +6,8 @@ package it.unimore.iot.smart.home.project.edge_application.utils;
  */
 public final class ResourceType {
 
+    public static final String PRESENCE_SENSOR = "presence-sensor";
+
     public static final String LIGHT_SWITCH = "light-controller/switch";
 
     public static final String LIGHT_INTENSITY = "light-controller/intensity";

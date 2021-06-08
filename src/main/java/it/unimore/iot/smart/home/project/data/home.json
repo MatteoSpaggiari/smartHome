@@ -22,7 +22,7 @@
             "presence-sensor"
           ],
           "type": "presence_sensor",
-          "presence": true
+          "presence": false
         },
         {
           "id": "2",
@@ -37,7 +37,7 @@
             "light-controller/color"
           ],
           "type": "light_controller",
-          "active": true,
+          "active": false,
           "intensity": 80.0,
           "color":
           {

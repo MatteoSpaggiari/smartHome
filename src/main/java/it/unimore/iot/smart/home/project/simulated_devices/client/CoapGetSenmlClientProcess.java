@@ -1,5 +1,8 @@
 package it.unimore.iot.smart.home.project.simulated_devices.client;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import it.unimore.iot.smart.home.project.simulated_devices.message.MessageSenMLIntensity;
+import it.unimore.iot.smart.home.project.simulated_devices.message.MessageSenMLSwitch;
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.Utils;
@@ -27,10 +30,12 @@ public class CoapGetSenmlClientProcess {
 
 	private final static Logger logger = LoggerFactory.getLogger(CoapGetSenmlClientProcess.class);
 
-	private static final String COAP_ENDPOINT = "coap://127.0.0.1:5783/light-controller/color/";
+	private static final String COAP_ENDPOINT = "coap://127.0.0.1:5783/light-controller/switch";
 
 	public static void main(String[] args) {
-		
+
+		ObjectMapper objectMapper = new ObjectMapper();
+
 		//Initialize coapClient
 		CoapClient coapClient = new CoapClient(COAP_ENDPOINT);
 
@@ -59,8 +64,26 @@ public class CoapGetSenmlClientProcess {
 			//The "CoapResponse" message contains the response.
 			String text = coapResp.getResponseText();
 			logger.info("Payload: {}", text);
+
+			MessageSenMLSwitch message = objectMapper.readValue(text, MessageSenMLSwitch.class);
+
+			logger.info("Message receveid {}", message);
+			logger.info("Message receveid {}", message.getValue());
+
+			/*
+			text = text.substring(1,(text.length()-1));
+
+			logger.info("Message format {}", text);
+
+			MessageSenMLIntensity message = objectMapper.readValue(text, MessageSenMLIntensity.class);
+
+			logger.info("Message receveid {}", message);
+			*/
+
+			/*
 			logger.info("Message ID: " + coapResp.advanced().getMID());
 			logger.info("Token: " + coapResp.advanced().getTokenString());
+			*/
 
 		} catch (ConnectorException | IOException e) {
 			e.printStackTrace();

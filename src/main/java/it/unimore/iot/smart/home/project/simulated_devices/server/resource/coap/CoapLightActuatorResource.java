@@ -2,6 +2,7 @@ package it.unimore.iot.smart.home.project.simulated_devices.server.resource.coap
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import it.unimore.iot.smart.home.project.simulated_devices.message.MessageSenMLSwitch;
 import it.unimore.iot.smart.home.project.simulated_devices.server.resource.raw.LightRawActuator;
 import it.unimore.iot.smart.home.project.simulated_devices.server.resource.raw.ResourceDataListener;
 import it.unimore.iot.smart.home.project.simulated_devices.server.resource.raw.SmartObjectResource;
@@ -128,6 +129,7 @@ public class CoapLightActuatorResource extends CoapResource {
     public void handlePOST(CoapExchange exchange) {
 
         try{
+
             //Empty request
             if(exchange.getRequestPayload() == null){
 
@@ -152,10 +154,46 @@ public class CoapLightActuatorResource extends CoapResource {
     @Override
     public void handlePUT(CoapExchange exchange) {
 
-        try{
+        try {
+
+            // TODO: Grab put request in senML + JSON
+            /*
+            //If the request specify the MediaType as JSON or JSON+SenML
+            if ((exchange.getRequestOptions().getAccept() == MediaTypeRegistry.APPLICATION_SENML_JSON ||
+                    exchange.getRequestOptions().getAccept() == MediaTypeRegistry.APPLICATION_JSON)
+                    && exchange.getRequestPayload() != null) {
+
+                String content = new String(exchange.getRequestPayload());
+
+                MessageSenMLSwitch message = objectMapper.readValue(content, MessageSenMLSwitch.class);
+
+                logger.info("Submitted value APPLICATION_SENML_JSON: {}", message);
+
+                //Update internal status
+                this.isOn = message.getValue();
+                this.lightRawActuator.setActive(this.isOn);
+
+                logger.info("Resource Status Updated APPLICATION_SENML_JSON: {}", this.lightRawActuator.getActive());
+
+                exchange.respond(CoAP.ResponseCode.CHANGED);
 
             //If the request body is available
-            if(exchange.getRequestPayload() != null){
+            } else if(exchange.getRequestOptions().getAccept() == MediaTypeRegistry.TEXT_PLAIN && exchange.getRequestPayload() != null) {
+
+                boolean submittedValue = Boolean.parseBoolean(new String(exchange.getRequestPayload()));
+
+                logger.info("Submitted value: {}", submittedValue);
+
+                //Update internal status
+                this.isOn = submittedValue;
+                this.lightRawActuator.setActive(this.isOn);
+
+                logger.info("Resource Status Updated: {}", this.lightRawActuator.getActive());
+
+                exchange.respond(CoAP.ResponseCode.CHANGED);
+            }
+            */
+            if(exchange.getRequestPayload() != null) {
 
                 boolean submittedValue = Boolean.parseBoolean(new String(exchange.getRequestPayload()));
 
