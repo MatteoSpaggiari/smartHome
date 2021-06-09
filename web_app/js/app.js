@@ -124,4 +124,4 @@ function retrieveData() {
 }
 
 retrieveData();
-window.setInterval(retrieveData, 500);
+//window.setInterval(retrieveData, 500);
